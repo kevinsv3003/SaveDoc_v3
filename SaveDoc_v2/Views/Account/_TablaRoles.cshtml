@@ -1,0 +1,102 @@
+﻿@model List<Dominio.EntidadesDto.RolDto>
+@*<script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>*@
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.21/af-2.3.5/b-1.6.3/b-colvis-1.6.3/b-html5-1.6.3/b-print-1.6.3/datatables.min.js"></script>
+
+
+<div class="row">
+    <div class=" col-md-12">
+        <div class="box box-success shadow">
+            <div class="box-header with-border">
+                <i class="fa fa-id-card-o"></i>
+                <h3 class="box-title">Listado de Roles  </h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="contentRol" class="box-body box-profile" style="padding: 10px 20px 10px 20px">
+                <table id="tablaRol" class="table table-hover dataTable" style="border: 1px solid #dddddd;" role="grid">
+                  
+                    <thead>
+                        <tr class="bg-olive">
+                            <th class="text-left">
+                                Nombre Rol
+                            </th>                           
+                            <th class="text-left">
+                                Descripción Rol
+                            </th>
+                            <th class="text-center">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-justify">
+                                    @item.Nombre
+                                </td>
+                                <td class="text-justify">
+                                    @item.Descripcion
+                                </td>
+                               
+                                <td style="width: 15em;" class="text-right">
+                                    <a class="btn btn-flat bg-olive shadow grow btn-sp btnaccion" onclick="ShowModalEditRol(1,'@item.IdRol')" data-toggle="tooltip" data-html="true" data-placement="left" title="Ver Detalles">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                   
+                                    <a class="btn btn-flat btn-danger shadow grow btn-sp btnaccion" onclick="_Eliminar('@item.IdRol')" data-toggle="tooltip" data-html="true" data-placement="left" title="Eliminar">
+                                        <i class="fa fa-remove"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        EstiloTabla('#tablaRol');
+    });
+
+    function _Eliminar(id) {
+        ConfirmarEliminado(EliminarRol, id);
+    }
+    
+    function EliminarRol(Id) {
+        IniciarLoad('#contentRol');
+        var url = '@Url.Action("EliminarRol", "Account")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(Id),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {                
+                ShowRoles();
+                SuccessGuardarJq(response, vacio);
+                CerrarLoad('#contentRol');
+            },
+            error: function (response) {
+                console.log(response);
+                CerrarLoad('#contentRol');
+                FailGuardarJq(response);
+            }
+        });
+    }
+
+
+</script>

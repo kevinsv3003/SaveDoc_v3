@@ -1,0 +1,187 @@
+﻿@model List<Dominio.EntidadesDto.DetalleActividadDto>
+
+<style>
+    .fondoTarjeta {
+        color: white;
+        background-image: url("../dist/img/fondo_verde.jpg");
+    }
+
+    .panelContraido {
+        height: auto !important;
+    }
+
+    .texto {
+        margin-bottom: 20px;
+        text-align: center;
+        align-self: center;
+    }
+
+    .descripciones {
+        height: 130px;
+        overflow-y: auto
+    }
+</style>
+
+
+@*SELECT MULTIPLE*@
+<link href="~/bower_components/Select_Bootstrap/bootstrap-select.min.css" rel="stylesheet" />
+<script src="~/bower_components/Select_Bootstrap/bootstrap-select.min.js"></script>
+<script src="~/bower_components/Select_Bootstrap/defaults-es_ES.min.js"></script>
+
+<div class="row">
+    <div class=" col-md-12">
+        <div class="box box-success shadow">
+            <div class="box-header with-border">
+                <i class="fa fa-calendar-plus-o"></i>
+                <h3 class="box-title">Detalle de Actividades</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" onclick="ocultarPanel('#iconActividadPersonal', '#contentUser');">
+                        <i id="iconActividadPersonal" class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="contentUser" class="box-body box-profile" style="padding: 10px 20px 10px 20px">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div style="position:relative; z-index:1" class="panel panel-success">
+                            <div class="panel-heading with-border">
+                                <h3 id="btnPanelBusqueda" style="cursor:pointer" class="panel-title">
+                                    <i class="fa fa-search"></i>
+                                    Filtro de Busqueda de Actividades
+                                </h3>
+                            </div>
+                            <div id="panelBusqueda" class="panel-body">
+                                <div class="row">
+                                    <input type="hidden" id="personalId" value="@ViewBag.PersonalId" />
+                                    
+                                    <div class="col-md-3">
+                                        <label>Año:</label>
+                                        <div id="" class="form-group">
+                                            <select class="form-control" id="spAnio" data-live-search="true">
+                                                <option value="0">..:: Seleccione una Opción ::..</option>
+                                                <option value="1">TODOS</option>
+                                                <option selected value="2023">2023</option>
+                                                <option value="2022">2022</option>
+                                                <option value="2021">2021</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 ">
+                                        <label>Mes:</label>
+                                        <div id="" class="form-group">
+                                            <select class="form-control" id="spMes" data-live-search="true">
+                                                <option value="0">..:: Seleccione una Opción ::..</option>
+                                                <option selected value="13">TODOS</option>
+                                                <option value="1">Enero</option>
+                                                <option value="2">Febrero</option>
+                                                <option value="3">Marzo</option>
+                                                <option value="4">Abril</option>
+                                                <option value="5">Mayo</option>
+                                                <option value="6">Junio</option>
+                                                <option value="7">Julio</option>
+                                                <option value="8">Agosto</option>
+                                                <option value="9">Septiembre</option>
+                                                <option value="10">Octubre</option>
+                                                <option value="11">Noviembre</option>
+                                                <option value="12">Diciembre</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="ShowCardsActividades" style="position:relative;" class="animated fadeIn">
+                            <partial name="_CardActividades" model="Model" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+       // activarPaneles();
+        $('#spAnio').selectpicker();
+        $('#spMes').selectpicker();
+    });
+
+    $("#btnPanelBusqueda").click(function () {
+        $('#panelBusqueda').toggle("swing");
+    });
+
+
+    $('#spAnio').change(function () {        
+        buscarActividades();
+    });
+    $('#spMes').change(function () {        
+        buscarActividades();
+    });
+
+    function buscarActividades() {
+        let personalId = $('#personalId').val();
+        let anio = $('#spAnio').val();
+        let mes = $('#spMes').val();
+
+        IniciarLoad('#divGrupos');
+        var url = '@Url.Action("_CardActividades", "Personal")';
+        var data = { personalId: personalId, anio: anio, mes: mes };
+        if (anio != 0 && mes != 0) {
+            $.ajax({
+                type: "POST",
+                url: url,
+                contentType: "application/x-www-form-urlencoded",
+                dataType: "html",
+                data: data,
+                async: true,
+                success: function (response) {
+                    setTimeout(function () {
+                        $('#ShowCardsActividades').html(response);
+                        CerrarLoad('#divGrupos');
+                        activarPaneles();
+                    }, 200);
+
+                },
+                error: function (response) {
+                    console.log(response);
+                    CerrarLoad('#divGrupos');
+                    $("#sltArea").val(0);
+                    FailMensaje("No se encuentran documentos relacionados con esta área.");
+                    buscarDocumento(99);
+                }
+            })
+        } else {
+            CerrarLoad('#divGrupos');
+            FailMensaje("Por favor seleccionar el año y el mes que desea buscar.");
+        }
+    }
+    function activarPaneles() {
+        debugger;
+        let actividades = $('#actividadesPersona').val();
+        let porcentActividad = $('#porcentajeAsistencia').val();
+        ClasificacionActividades(porcentActividad);
+        console.log('actividades:' + actividades);
+        console.log('porcentaje asistencia:' + porcentActividad);
+
+        if (actividades == 0) {
+            $('#panelBusqueda').addClass("animated fadeIn");
+            $('#divGrupos').addClass("panelContraido");
+        }
+        if (actividades > 0) {
+            $('#panelBusqueda').toggle("collapse");
+            $('#divGrupos').removeClass("panelContraido");
+        }
+    }
+
+</script>

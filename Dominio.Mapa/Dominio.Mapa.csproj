@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Dominio.EntidadesDto\Dominio.EntidadesDto.csproj" />
+    <ProjectReference Include="..\Entidades.Entidades\Entidades.Entidades.csproj" />
+  </ItemGroup>
+
+</Project>

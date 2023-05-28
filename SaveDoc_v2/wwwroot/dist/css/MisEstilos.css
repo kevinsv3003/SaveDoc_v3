@@ -1,0 +1,47 @@
+﻿.grow:hover {
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1);
+    z-index: 100000;
+}
+
+.grow > i:hover {
+    -webkit-transform: scale(1.1);
+    -ms-transform: scale(1.1);
+    transform: scale(1.1);
+}
+
+.btn-sp {
+    padding: 1px 7px !important;
+    font-size: 17px !important;
+    line-height: 1.5 !important;
+    border-radius: 5px !important
+}
+
+.shadow {
+    box-shadow: 0 2px 15px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12) !important;
+}
+
+.pl0 {
+    padding-left: 0px !important;
+}
+
+.texto-Cabecera {
+    font-weight: normal !important;
+    color: #3f7bae !important;
+}
+
+.redondeo {
+    border-radius: 10px !important;
+}
+
+.btn-verde {
+    background: #049462 !important;
+    color:#ffffff !important;
+}
+
+    .btn-verde:hover {
+        background-color: #01714a !important;
+    }
+
+

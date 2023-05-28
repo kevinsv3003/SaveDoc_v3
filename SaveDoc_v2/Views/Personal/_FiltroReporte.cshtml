@@ -1,0 +1,116 @@
+﻿
+<style type="text/css">
+    .d-none {
+        display: none;
+    }
+</style>
+
+@*SELECT MULTIPLE*@
+<link href="~/bower_components/Select_Bootstrap/bootstrap-select.min.css" rel="stylesheet" />
+<script src="~/bower_components/Select_Bootstrap/bootstrap-select.min.js"></script>
+<script src="~/bower_components/Select_Bootstrap/defaults-es_ES.min.js"></script>
+
+<link href="~/dist/css/CheckRadio.css" rel="stylesheet" />
+
+<div class="modal fade shadow" id="modal-filtroReporte" data-backdrop="static" style="display:none; z-index:10000">
+    <div class="modal-dialog animated fadeIn" style="max-width: 450px!important;">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <h4 class="modal-title text-center">
+                    <i class="fa fa-edit"></i>
+                    <strong>Tipo de Reporte</strong>
+                </h4>
+            </div>
+
+            <div id="formularioTipoReporte" class="modal-body">
+                <div class="row">
+
+                    <div class="col-md-4">
+                        <label for="EsManaguaFiltro">De Managua:</label>
+                        <div class="form-group">
+                            <div class="checkbox checkbox-success checkbox-inline">
+                                <input type="checkbox" id="EsManaguaFiltro" checked />
+                                <label for="EsManaguaFiltro"> Sí </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label>Genero:</label>
+                        <div id="" class="form-group">
+                            <select class="form-control" id="generoFiltro">
+                                <option value="0">..:: Seleccione una Opción ::..</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                                <option selected value="Ambos">Ambos</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div id="FormTipoReporteEstablecido">
+                            <label>Tipo Reporte:</label>
+                            <a href="#" style="color:#01714a" class="pull-right" onclick="FormReporteArmado()">[Cambiar Tipo de Reporte]</a>
+                            <div id="" class="form-group">
+                                <select class="form-control" id="reporteFiltro" name="reporteFiltro">
+                                    <option value="0">..:: Seleccione una Opción ::..</option>
+                                    <option value="3">Personal Disponible</option>
+                                    <option value="6">Personal Estudiando</option>
+                                    <option value="11">Personal Menores 35</option>
+                                    <option value="8">Personal de Renta</option>
+                                    <option value="9">Coordinadores de JS</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="FormTipoReporteArmado" style="position:relative;z-index:1" class="d-none">
+                            <label>Tipo Reporte:</label>
+                            <a href="#" style="color:#01714a" class="pull-right" onclick="FormReporteEstablecido()">[Cambiar Tipo de Reporte]</a>
+                            <div id="" class="form-group">
+                                <select class="form-control" id="reporteFiltroArmado" data-live-search="true" multiple data-actions-box="true" title="..:: Seleccione Observaciones ::.." asp-items="@ViewBag.Observaciones"></select><br /><br />
+                                <select class="form-control" id="reporteFiltroRestriccion" data-live-search="true" multiple data-actions-box="true" title="..:: Seleccione Restricciones ::.." asp-items="@ViewBag.Observaciones"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <button type="button" class="btn btn-block btn-verde redondeo shadow grow" onclick="GenerarReporte()">
+                                <i class="fa fa-save"></i> Generar Reporte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('#reporteFiltroArmado').selectpicker();
+        $('#reporteFiltroRestriccion').selectpicker();
+    });
+
+    function FormReporteEstablecido() {
+        $("#FormTipoReporteArmado").addClass("d-none");
+        $("#FormTipoReporteEstablecido").removeClass("d-none");
+        $("#FormTipoReporteEstablecido").addClass("animated flipInY");
+    }
+    function FormReporteArmado() {
+        $('#reporteFiltro option:first').prop('selected', true);
+        $("#FormTipoReporteEstablecido").addClass("d-none");
+        $("#FormTipoReporteArmado").removeClass("d-none");
+        $("#FormTipoReporteArmado").addClass("animated flipInY");
+    }
+
+
+</script>

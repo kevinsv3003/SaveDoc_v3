@@ -1,0 +1,215 @@
+﻿@model Dominio.EntidadesDto.CuentaDto
+
+@{
+    ViewBag.Title = "Cuenta";
+    ViewBag.SubTitle = "Cuenta Personal";
+    ViewBag.url = @Url.Action("Index", "Cuenta");
+    ViewBag.Regresar = @Url.Action("Index", "Home");
+    Layout = "~/Views/Shared/_LayoutDoc.cshtml";
+}
+
+
+<style>
+
+    .panelContraido {
+        height: auto !important;
+    }
+
+    .texto {
+        margin-bottom: 20px;
+        text-align: center;
+        align-self: center;
+    }
+
+    .descripciones {
+        height: 130px;
+        overflow-y: auto
+    }
+</style>
+
+
+<div class="row">
+    <div class=" col-md-12">
+        <div class="box box-success shadow">
+            <div class="box-header with-border">
+                <i class="fa fa-bank"></i>
+                <h3 class="box-title">Detalle de Movimientos</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" onclick="ocultarPanel('#iconActividadPersonal', '#contentUser');">
+                        <i id="iconActividadPersonal" class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="contentUser" class="box-body box-profile" style="padding: 10px 20px 10px 20px">
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <div style="position:relative; z-index:1" class="panel panel-success">
+                            <div class="panel-heading with-border">
+                                <h3 id="btnPanelBusqueda" style="cursor:pointer" class="panel-title">
+                                    <i class="fa fa-search"></i>
+                                    Filtro de Busqueda de Movimientos
+                                </h3>
+                            </div>
+                            <div id="panelBusqueda" class="panel-body">
+                                <div class="row">
+
+                                    <div class="col-md-4">
+                                        <label>Cuenta:</label>
+                                        <div id="" class="form-group">
+                                            <select id="sltCuentas" data-live-search="true" class="form-control" title="..:: Seleccione una Opción ::.." asp-items="@ViewBag.Cuentas"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Año:</label>
+                                        <div id="" class="form-group">
+                                            <select class="form-control" id="spAnioC" data-live-search="true">
+                                                <option value="0">..:: Seleccione una Opción ::..</option>
+                                                <option value="1">TODOS</option>
+                                                <option selected value="2023">2023</option>
+                                                <option value="2022">2022</option>
+                                                <option value="2021">2021</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Mes:</label>
+                                        <div id="" class="form-group">
+                                            <select class="form-control" id="spMesC" data-live-search="true" asp-items="@ViewBag.Meses">                                               
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="viewEstadoCuenta"></div>
+                </div>
+
+                <div id="viewListaCuentaPersonal"></div>
+                <div id="modalMovimiento"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+
+<script>
+
+    $(function () {
+        $('#spAnioC').selectpicker();
+        $('#spMesC').selectpicker();
+        $('#sltCuentas').selectpicker();
+        cargarDatosCuenta();
+    });
+
+    $('#spMesC').change(function () {
+        cargarDatosCuenta();
+    });
+
+    $('#sltCuentas').change(function () {
+        cargarDatosCuenta();
+    });
+
+    function cargarDatosCuenta() {
+        let cuentaId = $('#sltCuentas').val();
+        ShowCuentaPersonal(cuentaId);
+        ShowEstadoCuenta(cuentaId);
+    }
+
+    function ShowCuentaPersonal(cuentaId) {
+        let anio = $('#spAnioC').val();
+        let mes = $('#spMesC').val();
+        let parametros = { cuentaId: cuentaId, mes: mes, anio: anio }
+
+        let url = '@Url.Action("_TablaMovimiento", "Cuenta")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "html",
+            data: parametros,
+            success: function (response) {
+                $('#viewListaCuentaPersonal').html(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function ShowEstadoCuenta(cuentaId) {
+        let anio = $('#spAnioC').val();
+        let mes = $('#spMesC').val();
+        let parametros = { cuentaId: cuentaId, mes: mes, anio: anio };
+
+        let url = '@Url.Action("_EstadoCuenta", "Cuenta")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "html",
+            data: parametros,
+            success: function (response) {
+                $('#viewEstadoCuenta').html(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function ShowFormMovimiento(movimientoId) {
+
+        let url = '@Url.Action("_FormMovimiento", "Cuenta")';
+        let cuentaId = $('#sltCuentas').val();
+        let parametros = { cuentaId: cuentaId, movimientoId: movimientoId };
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/x-www-form-urlencoded",
+            data: parametros,
+            dataType: "html",
+            success: function (response) {
+                $('#modalMovimiento').html(response);
+                $('#modal-FormularioMovimiento').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function _EliminarMovimiento(movimientoId) {
+        IniciarLoad('#contentMovimientos');
+        var url = '@Url.Action("EliminarMovimiento", "Cuenta")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(movimientoId),
+            contentType: "application/json; utf-8",
+            dataType: "html",
+            success: function (response) {
+                console.log(response);
+                CerrarLoad('#contentMovimientos');
+                //SuccessGuardarJq('Se ha eliminado el movimiento correctamente!!', cargarDatosCuenta);
+                cargarDatosCuenta();
+            },
+            error: function (response) {
+                console.log(response);
+                CerrarLoad('#contentMovimientos');
+                FailGuardarJq(response);
+            }
+        });
+    }
+
+</script>

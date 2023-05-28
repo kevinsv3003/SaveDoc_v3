@@ -1,0 +1,238 @@
+﻿
+@using Entidades.Entidades
+
+@model Dominio.EntidadesDto.ActividadDto
+
+@{
+    var TituloFormulario = "Seleccionar Participantes";
+    var TituloBtn = "Guardar Participantes";
+    var actividadId = Model.ActividadId;
+
+}
+
+@*SELECT MULTIPLE*@
+<link href="~/bower_components/Select_Bootstrap/bootstrap-select.min.css" rel="stylesheet" />
+<script src="~/bower_components/Select_Bootstrap/bootstrap-select.min.js"></script>
+<script src="~/bower_components/Select_Bootstrap/defaults-es_ES.min.js"></script>
+
+@*LIBRERIA DE INPUT MASK*@
+<script src="~/bower_components/inputmask/dist/min/inputmask/jquery.inputmask.min.js"></script>
+<script src="~/bower_components/inputmask/dist/inputmask/bindings/inputmask.binding.js"></script>
+<link href="~/dist/css/CheckRadio.css" rel="stylesheet" />
+
+<div id="_modalFiltroPropuesta"></div>
+
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="modal-participantes">
+    <div class="modal-dialog modal-lg fadeIn" style="max-width: 800px!important;" role="document">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <h4 class="modal-title text-center">
+                    <i class="fa fa-edit"></i>
+                    <strong>@TituloFormulario</strong>
+                </h4>
+            </div>
+
+            <div id="formularioPart" class="modal-body">
+                <div id="_TablaPart"></div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <button type="button" class="btn btn-block btn-verde redondeo shadow grow" onclick="SaveParticipantes(@ViewBag.ActividadId)">
+                            <i class="fa fa-save"></i> @TituloBtn
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+    function HideModalActividad() {
+        $('#modal-participantes').modal("hide");
+    }
+
+    function SaveParticipantes(actividadId) {
+        IniciarLoad('#formularioPart');
+        //EliminarDetalle(actividadId);
+
+        setTimeout(function () {
+            var registrosTotales = $("#tablaParticipantes").dataTable().fnGetNodes();
+            var ListaPart = [];
+            $(':checked', registrosTotales).each(function () {
+                var participante = $(this).val();
+                ListaPart.push(participante);
+            });
+            console.log(ListaPart);
+
+            var url = '@Url.Action("saveParticipante", "Actividad")';
+            var data = { actividadId: actividadId, personal: ListaPart};
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                async:false,
+                contentType: "application/x-www-form-urlencoded",
+                dataType: "html",
+                success: function (response) {
+                    console.log('agregado personalId: ' + ListaPart);
+                },
+                error: function (response) {
+                    FailMensaje('Se produjo un error al actualizar su información!!');
+                    CerrarLoad('#formObservaciones');
+                }
+            });
+
+
+
+            CerrarLoad('#formularioPart');
+            SuccessGuardarJq('Se registraron los convocados para esta actividad', HideModalActividad);
+            ShowActividades();
+
+        }, 100);
+
+    }
+
+    function EliminarDetalle(actividadId) {
+        var url = '@Url.Action("BorrarDetalleActividad", "Actividad")';
+        var data = { actividadId: actividadId};
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "html",
+            success: function (response) {
+                console.log('detalle eliminado');
+            },
+            error: function (response) {
+                FailMensaje('Se produjo un error al eliminar el detalle!!');
+                CerrarLoad('#formObservaciones');
+            }
+        });
+    }
+
+    function ShowParticipante() {
+
+        var url = '@Url.Action("_TablaParticipantes", "Actividad")';
+        var actividadId = @actividadId;
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(actividadId),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#_TablaPart').html(response);
+                EstiloTablaParticipantes('#tablaParticipantes');
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function CargarPropuesta() {
+        IniciarLoad("#formularioBusquedaParticipante");
+        var url = '@Url.Action("PropuestaPersonal", "Actividad")';
+        var actividadId = @actividadId;
+        var cantidad = $('#cantidadFiltro').val();
+        var renta = 2;//$('#rentaFiltro').val();
+        var observaciones = $('#excepcionFiltro').val();
+        var genero = $('#generoFiltro').val();
+        var EsManagua = $('#EsManagua').is(':checked');
+        var EsParticipativo = $('#EsParticipativo').is(':checked');
+
+        console.log(observaciones);
+        var data = { cantidad: cantidad, renta: renta, genero: genero, EsManagua: EsManagua, EsParticipativo: EsParticipativo, observaciones: observaciones };
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "html",
+            success: function (response) {
+                $('#_TablaPart').html(response);
+                EstiloTablaParticipantes('#tablaParticipantes');
+                CerrarLoad('#formularioBusquedaParticipante');
+                $('#modal-filtroPersonal').modal("hide");
+            },
+            error: function (response) {
+                console.log(response);
+                CerrarLoad('#formularioBusquedaParticipante');
+            }
+        });
+    }
+
+
+    function ShowFiltrosPropuesta() {
+
+        var url = '@Url.Action("_FiltroPropuestaPersonal", "Actividad")';
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#_modalFiltroPropuesta').html(response);
+                $('#modal-filtroPersonal').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    $(function () {
+        ShowParticipante();
+    });
+
+    function EstiloTablaParticipantes(Tabla) {
+        $(Tabla).DataTable({
+            "dom": '<"pull-left"f>t<"mgt-12"<"text-center"p><"pull-right"i>>',
+            "paging": true,
+            "lengthMenu": [[10, 20, 25, -1], [10, 20, 25, "Todos"]],
+            "searching": true,
+            "ordering": true,
+            "info": false,
+            "autoWidth": false,
+            "scrollX": false,
+            language: {
+                "decimal": "",
+                "emptyTable": "No hay información",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 to 0 of 0 registros",
+                "infoFiltered": "(Filtrado de _MAX_ total registros)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar:",
+                "zeroRecords": "Sin resultados encontrados",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        })
+    }
+
+</script>
+
+

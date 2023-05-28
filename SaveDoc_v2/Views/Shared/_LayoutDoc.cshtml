@@ -1,0 +1,530 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Entidades.Entidades
+
+@inject SignInManager<UsuarioApp> SignInManager
+@inject UserManager<UsuarioApp> UserManager
+
+@{
+    var nombre = "";
+    var rol = "";
+    var sexo = "";
+    var usuario = User.Identity.IsAuthenticated ? await UserManager.GetUserAsync(User) : null; /*new UsuarioApp() { Nombres = " ", Apellidos = " " }*/;
+    if (usuario != null)
+    {
+        var nombres = usuario.Nombres.ToString().Split(' ');
+        var apellidos = usuario.Apellidos.ToString().Split(' '); ;
+        nombre = User.Identity.IsAuthenticated ? nombres[0] + " " + apellidos[0] : "";
+        var rolList = await UserManager.GetRolesAsync(usuario);
+        rol = User.Identity.IsAuthenticated ? new List<string>(rolList).ToArray()[0] : "";
+        sexo = usuario.Sexo;
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Mi Proyecto Core KSV</title>
+    <link href="~/dist/css/MisEstilos.css" rel="stylesheet" />
+
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="~/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="~/bower_components/Ionicons/css/ionicons.min.css">
+    <link href="~/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <!--DateTimePicker-->
+    <link href="~/bower_components/DateTimePicker_Full/bootstrap-datetimepicker.css" rel="stylesheet" />
+
+    <!--SELECT MULTIPLE-->
+    <link href="~/bower_components/Select_Bootstrap/bootstrap-select.min.css" rel="stylesheet" />
+
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="~/dist/css/skins/skin-blue-light.min.css">
+    <link href="~/dist/css/toastr.min.css" rel="stylesheet" />
+    <link href="~/dist/css/animate.css" rel="stylesheet" />
+    <link href="~/dist/css/jquery-confirm.min.css" rel="stylesheet" />
+    <link href="~/dist/css/waitMe.css" rel="stylesheet" />
+
+    <!-- Google Font
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">-->
+    <!--Toast-->
+    <link href="~/dist/css/toastr.css" rel="stylesheet" />
+
+    <style>
+        .FondoVerde {
+            background-color: #049462 !important;
+        }
+
+        .FondoVerde_H:hover {
+            background-color: #01714a !important;
+        }
+
+        .mgt-12 {
+            margin-top: 12px !important;
+        }
+
+        .pagination > .active > a,
+        .pagination > .active > span,
+        .pagination > .active > a:hover,
+        .pagination > .active > span:hover,
+        .pagination > .active > a:focus,
+        .pagination > .active > span:focus {
+            z-index: 3;
+            color: #fff;
+            cursor: default;
+            background-color: #049462;
+            border-color: #337ab7;
+        }
+
+        div.dataTables_wrapper div.dataTables_filter input {
+            margin-left: 0.5em;
+            display: inline-block;
+            width: 130%;
+        }
+
+        .dataTables_scrollBody {
+            position: relative;
+            overflow: hidden !important;
+            width: 100%;
+        }
+    </style>
+
+</head>
+<body class="hold-transition skin-blue-light sidebar-mini">
+    <div class="wrapper">
+        <!-- Main Header -->
+        <header class="main-header">
+            <!-- Logo -->
+            <a href="@Url.Action("Index", "Home")" class="logo FondoVerde FondoVerde_H">
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini"><b>MP</b>C</span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg"><b>Proyecto Core</b> Ksv</span>
+            </a>
+            <!-- Header Navbar -->
+            <nav class="navbar navbar-static-top FondoVerde" role="navigation">
+                <!-- Sidebar toggle button-->
+                <a href="#" class="sidebar-toggle FondoVerde_H" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                <!-- Navbar Right Menu -->
+                <div class="navbar-custom-menu">
+                    <ul class="nav navbar-nav">
+                        <!-- User Account Menu -->
+                        <li class="dropdown user user-menu">
+                            <!-- Menu Toggle Button -->
+                            <a href="#" class="dropdown-toggle FondoVerde FondoVerde_H" data-toggle="dropdown">
+                                <!-- The user image in the navbar-->
+                                @if (sexo == "M")
+                                {<img src="~/dist/img/avatar5.png" class="user-image" alt="User Image">}
+                                else
+                                {<img src="~/dist/img/avatar2.png" class="user-image" alt="User Image">}
+                                <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                                <span class="hidden-xs">  @UserManager.GetUserName(User) [@rol] </span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- The user image in the menu -->
+                                <li class="user-header FondoVerde ">
+                                    @if (sexo == "M")
+                                    {<img src="~/dist/img/avatar5.png" class="user-image" alt="User Image">}
+                                    else
+                                    {<img src="~/dist/img/avatar2.png" class="user-image" alt="User Image">}
+                                    <p style="color:white">
+                                        @nombre
+                                        <br />
+                                        @rol
+                                    </p>
+                                </li>
+
+                                <!-- Menu Footer-->
+                                <li class="user-footer">
+                                    <div class="pull-left">
+                                        <a href="@Url.Action("PerfilUsuario","Account")" class="btn bg-olive grow">
+                                            <i class="fa fa-gear "></i>
+                                            Config. Perfil
+                                        </a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="@Url.Action("Logout","Account")" class="btn bg-olive grow">
+                                            <i class="fa fa-mail-forward"></i>
+                                            Cerrar Sesión
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- Left side column. contains the logo and sidebar -->
+        <aside class="main-sidebar">
+            <!-- sidebar: style can be found in sidebar.less -->
+            <section class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+                <div class="user-panel">
+                    <div class="pull-left image">
+                        @if (sexo == "M")
+                        {<img src="~/dist/img/avatar5.png" class="user-image" alt="User Image">}
+                        else
+                        {<img src="~/dist/img/avatar2.png" class="user-image" alt="User Image">}
+                    </div>
+                    <div class="pull-left info">
+                        <p> @nombre</p>
+                        <!-- Status -->
+                        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                    </div>
+                </div>
+                @*@Html.Partial("_MainMenu")*@
+                <partial name="_MainMenu" />
+
+            </section>
+            <!-- /.sidebar -->
+        </aside>
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    @ViewBag.Title
+                    <small>@ViewBag.SubTitle</small>
+                </h1>
+                <ol class="breadcrumb">
+                    @*<li><a href="@Url.Action("Index","Home")"><i class="fa fa-dashboard"></i>Regresar</a></li>*@
+                    <li><a href="@ViewBag.Regresar"><i class="fa fa-dashboard"></i>Regresar</a></li>
+                    <li><a style=" color: #777!important" href="@ViewBag.url">@ViewBag.Title</a></li>
+                </ol>
+            </section>
+
+            <!-- /.content -->
+            <section class="content container-fluid">
+                @RenderBody()
+            </section>
+        </div>
+        <!-- /.content-wrapper -->
+        <!-- Main Footer -->
+        <footer class="main-footer">
+            <!-- Default to the left -->
+            <strong>Copyright &copy; SaveDoc v3 2022</strong> | Todos los derechos reservados.
+            <div class="pull-right hidden-xs">
+                <b>Versión:</b> Mark 3.0
+            </div>
+        </footer>
+    </div>
+
+
+    <!-- REQUIRED JS SCRIPTS -->
+    <!-- jQuery 3 -->
+    <script src="~/bower_components/jquery/dist/jquery.js"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="~/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/dist/js/jquery.validate.min.js"></script>
+    <script src="~/dist/js/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/dist/js/jquery.validate.unobtrusive.js"></script>
+    <script src="~/dist/js/jquery-confirm.min.js"></script>
+    <script src="~/dist/js/waitMe.js"></script>
+    <!-- ./InputMask -->
+    <script src="~/bower_components/inputmask/dist/min/inputmask/inputmask.min.js"></script>
+
+
+
+    @*datatables*@
+    <script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
+    <!--DateTimePicker JS-->
+    <script src="~/bower_components/DateTimePicker_Full/moment-with-locales.js"></script>
+    <script src="~/bower_components/DateTimePicker_Full/bootstrap-datetimepicker.min.js"></script>
+
+
+    <!--SELECT MULTIPLE-->
+    <script src="~/bower_components/Select_Bootstrap/bootstrap-select.min.js"></script>
+    <script src="~/bower_components/Select_Bootstrap/defaults-es_ES.min.js"></script>
+
+    <!-- AdminLTE App -->
+    <script src="~/dist/js/adminlte.min.js"></script>
+
+    <script src="~/dist/js/toastr.js"></script>
+
+    <script>
+
+
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "1500",
+            "extendedTimeOut": "1500",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+        function EstiloTabla(Tabla) {
+            $(Tabla).DataTable({
+                "dom": '<"pull-left"f>t<"mgt-12"<"pull-left"p><"pull-right"i>>',
+                "paging": true,
+                "lengthChange": false,
+                "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Todos"]],
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "scrollX": true,
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: '<button class="btn bg-red grow"><i class="fa fa-file-pdf-o"></i>  Exportar a PDF</button>',
+                        title: 'ArchivoPDFDatos',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: '<button style="margin-left:-12px" class="btn bg-olive grow"><i class="fa fa-file-excel-o"></i>  Exportar a Excel</button>',
+                        title: 'ArchivoExcelDatos',
+                        autoFilter: true,
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        }
+                    }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 registros",
+                    "infoFiltered": "(Filtrado de _MAX_ total registros)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ registros",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            })
+        }
+
+
+        function IniciarLoad(contenedor) {
+            // Mostramos el Ajax Loader
+            $(contenedor).waitMe({
+                effect: 'roundBounce',
+                text: 'Cargando...',
+                bg: 'rgba(255, 255, 255, 0.7)',
+                color: '#000',
+                maxSize: '',
+                textPos: 'vertical',
+                fontSize: '',
+                source: '',
+                onClose: function () { }
+            });
+        };
+        function CerrarLoad(contenedor) {
+            // Escondemos el Ajax Loader
+            $(contenedor).waitMe("hide");
+        };
+        function ConfirmarEliminado(funcion, parametro) {
+            $.confirm({
+                icon: 'fa fa-warning',
+                title: 'Confirmación!',
+                closeIcon: true,
+                closeIconClass: 'fa fa-close',
+                backgroundDismiss: false,
+                backgroundDismissAnimation: 'glow',
+                theme: 'Material',
+                animation: 'scale (default)',
+                closeAnimation: 'scale',
+                animationSpeed: 500,
+                content: '¿Desea eliminar este registro?',
+                type: 'dark',
+                typeAnimated: true,
+                buttons: {
+                    Aceptar: {
+                        text: 'Aceptar',
+                        btnClass: 'btn-dark',
+                        action: function () {
+                            funcion(parametro);
+                        }
+                    },
+                    Cancelar: {
+                        text: 'Cancelar',
+                        action: function () {
+
+                        }
+                    }
+                }
+            });
+        }
+        function ConfirmarRestauracion(funcion, parametro1, parametro2) {
+            $.confirm({
+                icon: 'fa fa-warning',
+                title: 'Confirmación!',
+                closeIcon: true,
+                closeIconClass: 'fa fa-close',
+                backgroundDismiss: false,
+                backgroundDismissAnimation: 'glow',
+                theme: 'Material',
+                animation: 'scale (default)',
+                closeAnimation: 'scale',
+                animationSpeed: 500,
+                content: '¿Desea restaurar la contraseña de este usuario?',
+                type: 'dark',
+                typeAnimated: true,
+                buttons: {
+                    Aceptar: {
+                        text: 'Aceptar',
+                        btnClass: 'btn-dark',
+                        action: function () {
+                            funcion(parametro1, parametro2);
+                        }
+                    },
+                    Cancelar: {
+                        text: 'Cancelar',
+                        action: function () {
+
+                        }
+                    }
+                }
+            });
+        }
+        function SuccessGuardarJq(data, funcion) {
+            console.log(data);
+            $.alert({
+                icon: 'fa fa-check',
+                title: 'Excelente!',
+                closeIcon: function () {
+                    funcion();
+                },
+                closeIconClass: 'fa fa-close',
+                backgroundDismiss: false,
+                backgroundDismissAnimation: 'glow',
+                theme: 'Material',
+                animation: 'zoom',
+                closeAnimation: 'zoom',
+                animationSpeed: 500,
+                content: data,
+                type: 'green',
+                typeAnimated: true,
+                bgOpacity: 0.4,
+                buttons: {
+                    Aceptar: {
+                        text: 'Aceptar',
+                        btnClass: 'btn-green',
+                        action: function () {
+                            funcion();
+                        }
+                    }
+                }
+            });
+        }
+        function SuccessMensajeAlerta(mensaje) {
+            console.log(mensaje);
+            $.dialog({
+                icon: 'fa fa-check',
+                title: 'Excelente!',
+                closeIcon: true,
+                closeIconClass: 'fa fa-close',
+                backgroundDismiss: true,
+                columnClass: 'small',
+                theme: 'Material',
+                animation: 'zoom',
+                closeAnimation: 'zoom',
+                animationSpeed: 400,
+                content: mensaje,
+                type: 'green',
+                typeAnimated: true,
+                bgOpacity: 0.4,
+                autoClose: true
+            });
+        }
+        function FailGuardarJq(data) {
+            console.log(data);
+            $.dialog({
+                icon: 'fa fa-remove',
+                title: 'Error!',
+                closeIcon: true,
+                closeIconClass: 'fa fa-close',
+                backgroundDismiss: true,
+                theme: 'Material',
+                animation: 'zoom',
+                closeAnimation: 'zoom',
+                animationSpeed: 500,
+                content: data.response,
+                type: 'red',
+                typeAnimated: true,
+                bgOpacity: 0.4,
+                buttons: {
+                    Aceptar: {
+                        text: 'Aceptar',
+                        btnClass: 'btn-red',
+                    }
+                }
+            });
+        }
+        function SuccessMensaje(mensaje) {
+            console.log(mensaje);
+            $.dialog({
+                icon: 'fa fa-check',
+                title: 'Excelente!',
+                closeIcon: true,
+                closeIconClass: 'fa fa-close',
+                backgroundDismiss: true,
+                columnClass: 'small',
+                theme: 'Material',
+                animation: 'zoom',
+                closeAnimation: 'zoom',
+                animationSpeed: 400,
+                content: mensaje,
+                type: 'green',
+                typeAnimated: true,
+                bgOpacity: 0.4
+            });
+        }
+        function FailMensaje(mensaje) {
+            console.log(mensaje);
+            $.dialog({
+                icon: 'fa fa-remove',
+                title: 'Error!',
+                closeIcon: true,
+                closeIconClass: 'fa fa-close',
+                backgroundDismiss: true,
+                theme: 'Material',
+                animation: 'zoom',
+                closeAnimation: 'zoom',
+                animationSpeed: 400,
+                content: mensaje,
+                type: 'red',
+                typeAnimated: true,
+                bgOpacity: 0.4
+            });
+        }
+        function vacio() { }
+    </script>
+
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

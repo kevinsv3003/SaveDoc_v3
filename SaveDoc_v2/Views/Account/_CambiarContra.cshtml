@@ -1,0 +1,86 @@
+﻿@model Dominio.EntidadesDto.LoginViewDto
+
+
+
+<div class="modal fade" id="modal-changePass" data-backdrop="static" style="display:none">
+    <div class=" modal-dialog modal-dialog-centered animated fadeIn">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="habilitarbtnNuevoDoc()">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <h4 class="modal-title text-center">
+                    <i class="fa fa-unlock"></i>
+                    <strong>Cambio de Contraseña</strong>
+                </h4>
+            </div>
+
+            <div id="formularioDoc" class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form asp-controller="Account" asp-action="CambiarContra"
+                              data-ajax="true"
+                              data-ajax-method="POST"
+                              data-ajax-begin="onBegin"
+                              data-ajax-complete="onComplete"
+                              data-ajax-success="onSuccessChangePass"
+                              data-ajax-failure="onFailChangePass">
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Contraseña:</label>
+                                    <div id="contentDocumento" class="form-group">
+                                        <input asp-for="Password" type="password" class="form-control" placeholder="Digite su contraseña actual">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Nueva Contraseña:</label>
+                                    <div id="contentDescripcion" class="form-group">
+                                        <input asp-for="NewPassword" type="password" class="form-control" placeholder="Digite su nueva contraseña">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+                            <div class="row">
+                                <div class="col-lg-8 col-lg-offset-2">
+                                    <button class="btn btn-block btn-verde redondeo shadow grow " id="btnGuardarDoc" type="submit">
+                                        <i class="fa fa-save"></i> Guardar Contraseña
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function onSuccessChangePass(response) {
+        SuccessGuardarJq(response, HideModalChangePass);
+    }
+
+    function onFailChangePass(response) {
+        FailMensaje(response.responseJSON);
+    }
+
+    function HideModalChangePass() {
+        $('#modal-changePass').modal('hide');
+    }
+
+    function onBegin() {
+        IniciarLoad('#formularioDoc');
+    };
+    function onComplete() {
+        // Escondemos el Ajax Loader
+        CerrarLoad('#formularioDoc');
+    };
+</script>

@@ -1,0 +1,120 @@
+﻿@{
+    ViewBag.Title = "Bienvenido a DocSave!";
+    ViewBag.SubTitle = "Sistema de almacenaje de documentos";
+    ViewBag.url = @Url.Action("Index", "Home");
+    Layout = "~/Views/Shared/_LayoutDoc.cshtml";
+}
+<!--------------------------
+ | Your Page Content Here |
+ -------------------------->
+
+<div class="row">
+    <div class="col-md-3">
+        <!-- small box -->
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3 style="font-size: 30px">Documentos</h3>
+                <p>Almacén de documentos</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-document"></i>
+            </div>
+            <a href="@Url.Action("Index", "Documento")" class="small-box-footer" style="height: 35px; line-height: 2.2">Más Información <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <!-- small box -->
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3 style="font-size: 30px">Áreas</h3>
+                <p>Almacén de áreas</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-map"></i>
+            </div>
+            <a href="@Url.Action("Index", "Area")" class="small-box-footer" style="height: 35px; line-height: 2.2">Más Información <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
+    @if (ViewBag.RolActual == "Administrador")
+    {
+
+        <div class="col-md-3">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3 style="font-size: 30px">Usuarios</h3>
+                    <p>Administrar Cuentas</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person-stalker"></i>
+                </div>
+                <a href="@Url.Action("AdministrarCuentas", "Account")" class="small-box-footer" style="height: 35px; line-height: 2.2">Más Información <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3 style="font-size: 30px">Roles</h3>
+                    <p>Administrar Roles</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-merge"></i>
+                </div>
+                <a href="@Url.Action("AdministrarRoles", "Account")" class="small-box-footer" style="height: 35px; line-height: 2.2">Más Información <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>       
+    }
+
+</div>
+
+<hr style="border-top: 1px solid #d4dbda !important; margin-top:0px!important;" />
+
+<div class="row">
+    <div class="col-md-3">
+        <!-- small box -->
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3 style="font-size: 30px">Personal</h3>
+                <p>Administrar Personal Rentas</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-ios-people"></i>
+            </div>
+            <a href="@Url.Action("Index", "Personal")" class="small-box-footer" style="height: 35px; line-height: 2.2">Más Información <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <!-- small box -->
+        <div class="small-box bg-green">
+            <div class="inner">
+                <h3 style="font-size: 30px">Actividades</h3>
+                <p>Gestionar Actividades Políticas</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-android-calendar"></i>
+            </div>
+            <a href="@Url.Action("Index", "Actividad")" class="small-box-footer" style="height: 35px; line-height: 2.2">Más Información <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    @if (ViewBag.RolActual == "Administrador")
+    {
+        <div class="col-md-3">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3 style="font-size: 30px">Cuenta</h3>
+                    <p>Gestionar Cuenta Personal</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-calculator"></i>
+                </div>
+                <a href="@Url.Action("Index", "Cuenta")" class="small-box-footer" style="height: 35px; line-height: 2.2">Más Información <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+    }
+    </div>

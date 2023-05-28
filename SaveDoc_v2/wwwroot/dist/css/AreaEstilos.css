@@ -1,0 +1,27 @@
+﻿
+.fondocard {
+    background: rgba(5, 18, 44, 0.09);
+    /*background-image: url(../dist/img/univ.jpg);*/
+    color: white !important;
+    height: 100px; /* You must set a specified height */
+    background-position: center; /* Center the image */
+    /*background-size: 350px;*/
+    background-repeat: no-repeat;
+    background-size: auto;
+}
+
+.texto {
+    margin-top: 30px;
+    margin-bottom: 0px;
+    text-align: center;
+    align-self: center;
+    font-weight: bold;
+}
+
+.descripciones {
+    height: 80px;
+    overflow-y: auto;
+    font-size:14px;
+        
+}
+

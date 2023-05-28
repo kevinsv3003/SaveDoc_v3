@@ -1,0 +1,47 @@
+﻿@model Dominio.EntidadesDto.CuentaDto
+
+<div class="col-md-7 animated fadeIn">
+    <div style="position:relative; z-index:1" class="panel panel-info">
+        <div class="panel-heading with-border">
+            <h3 id="btnPanelBusqueda" style="cursor:pointer" class="panel-title">
+                <i class="fa fa-tachometer"></i>
+                Estado de Cuenta
+            </h3>
+        </div>
+        <div id="panelBusqueda" class="panel-body">
+            <div class="row">
+
+                <div class="col-md-4">
+                    <div class="form-group has-primary">
+                        <label class="control-label" for="inputSuccess">Saldo Actual:</label>
+                        <div class="input-group">
+                            <span class="input-group-addon text-bold"><i class="fa fa-money"></i></span>
+                            <input type="text" class="form-control text-bold" value="@Model.totalSaldoActual" disabled />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group has-success">
+                        <label class="control-label" for="inputSuccess">Ingresos:</label>
+                        <div class="input-group">
+                            <span class="input-group-addon text-bold"><i class="fa fa-upload"></i></span>
+                            <input type="text" class="form-control text-bold" value="@Model.totalIngresos" disabled />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group has-error">
+                        <label class="control-label" for="inputSuccess">Gastos:</label>
+                        <div class="input-group">
+                            <span class="input-group-addon text-bold"><i class="fa fa-download"></i></span>
+                            <input type="text" class="form-control text-bold" value="@Model.totalGastos" disabled />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

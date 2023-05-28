@@ -1,0 +1,164 @@
+﻿@model Infraestructura.Transversal.Paginador<Dominio.EntidadesDto.ActividadDto>
+
+<style>
+    .fondoTarjeta {
+        color: white;
+        background-image: url("../dist/img/fondo_verde.jpg");
+    }
+
+    .texto {
+        margin-bottom: 20px;
+        text-align: center;
+        align-self: center;
+    }
+
+    .descripciones {
+        height: 150px;
+        overflow-y: auto
+    }
+</style>
+
+
+
+<div class="box box-success shadow">
+    <div class="box-header with-border">
+        <i class="fa fa-shopping-bag"></i>
+        <h3 class="box-title">Listado de Actividades</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="col-md-12">
+            <div class="row pull-right">
+                <button class="pull-right btn bg-olive grow" style="margin-bottom:10px!important">
+                    <i class="fa fa-fire"></i>
+                    Generar Reporte
+                </button>
+            </div>
+        </div>
+        <div id="divGrupos">
+            <div class="row">
+                @foreach (var item in Model.Resultado)
+                {
+                    var tipoActividad = item.EsEspecial ? "Actividad Especial                       " : "Actividad Común                       ";
+                    var especialIcon = item.EsEspecial ? "fa fa-star" : "fa fa-star-o";
+                    var especialClass = item.EsEspecial ? "badge bg-olive" : "badge bg-blue";
+
+                    <div class="col-md-3">
+
+                        <div class="box box-default shadow animated fadeIn" style="box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);">
+                            <div class="box-header with-border fondoTarjeta">
+                                <h3 class="texto">@item.NombreActividad</h3>
+                            </div>
+                            <div class="box-body descripciones">
+                                <div class="panel-text text-muted">Tipo:<span style="margin-left:4px" class="@especialClass">@tipoActividad<i class="@especialIcon"></i></span></div>
+                                <div class="panel-text text-muted">Lugar: <span>@item.Lugar</span></div>
+                                <div class="panel-text text-muted text-cute">Fecha: <span>@item.Fecha.Value.ToShortDateString()</span></div>
+                                <div class="panel-text text-muted text-cute">Participantes: <span>@item.Participantes</span></div>
+                                <div class="panel-text text-muted text-cute">Descripción: <span>@item.Descripcion</span></div>
+                            </div>
+                            <div class="box-footer">
+
+                                <div class="col-md-8" style="padding:0;margin:0px">
+                                    <button class="form-control btn btn-default fadeIn" title="Detalle Actividad" onclick="ShowModalDetalleActividad(@item.ActividadId)">
+                                        <i class="fa fa-commenting-o"></i>
+                                        Ver Detalles
+                                    </button>
+                                </div>
+                                <div class="col-md-2 " style="padding:0">
+                                    @*<a class="form-control btn bg-olive fadeIn grow" title="Generar Reporte" onclick="GenerarReporteActividad(@item.ActividadId)">
+                                        <i class="fa fa-print" style="font-size:19px"></i>
+                                    </a>*@
+
+                                    <button type="button" class=" form-control btn bg-olive fadeIn grow" title="Generar Reporte" data-toggle="dropdown" aria-expanded="true">
+                                        <i class="fa fa-print" style="font-size:19px"></i>
+                                        <span class="fa fa-caret-down"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a style="cursor:pointer" onclick="GenerarReporteParticipante(@item.ActividadId)">Reporte Participantes</a></li>
+                                        <li><a style="cursor: pointer" onclick="GenerarReporteActividad(@item.ActividadId)">Detalle Actividad</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-2 " style="padding:0">
+                                    <a class="form-control btn bg-olive fadeIn grow" title="Agregar Participantes" onclick="ShowModalParticipanteActividad(@item.ActividadId)">
+                                        <i class="fa fa-user-plus" style="font-size:19px"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <li id="liAnt" class="page-item">
+                                <span id="btnAnt" class="page-link navpoint" onclick="Navegacion((@Model.PaginaActual - 1), 0)" style="cursor: pointer; color:#666">Anterior</span>
+                            </li>
+                            @for (var i = 1; i <= Model.TotalPaginas; i++)
+                            {
+                                if (i == Model.PaginaActual)
+                                {
+                                    <li class="page-item active">
+                                        <span class="page-link navpoint bg-olive" onclick="Navegacion(@i, 0)" style="cursor: pointer;color:#666">@i</span>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item">
+                                        <span class="page-link navpoint" onclick="Navegacion(@i, 0)" style="cursor: pointer;color:#666">@i</span>
+                                    </li>
+                                }
+                            }
+
+                            <li id="liSig" class="page-item">
+                                <span id="btnSig" class="page-link navpoint" onclick="Navegacion((@Model.PaginaActual + 1), 0)" style="cursor: pointer; color:#666;">Siguiente</span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+        $(function () {
+            botonesPaginacion();
+        });
+
+        function botonesPaginacion() {
+            // debugger;
+            if (@Model.Resultado.Count() < 4) {
+                $("#btnSig").css("cursor", "not-allowed");
+                $("#btnSig").css("opacity", "0.65");
+                $('#liSig').addClass('disabled')
+
+            } else {
+                $("#btnSig").css("cursor", "pointer");
+                $("#btnSig").css("opacity", "1");
+                $('#liSig').removeClass('disabled');
+            }
+
+            if (@(Model.PaginaActual - 1) < 1 ) {
+                $("#btnAnt").css("cursor", "not-allowed");
+                $("#btnAnt").css("opacity", "0.65");
+                $('#liAnt').addClass('disabled');
+            } else {
+                $("#btnAnt").css("cursor", "pointer");
+                $("#btnAnt").css("opacity", "1");
+                $('#liAnt').removeClass('disabled');
+            }
+        }
+
+
+</script>

@@ -1,0 +1,94 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Entidades.Entidades
+
+@model Dominio.EntidadesDto.RolDto
+@inject UserManager<UsuarioApp> UserManager
+
+@{
+    var TituloFormulario = (ViewBag.Origen == 1) ? "Editar Información" : "Nuevo Rol";
+    var TituloBtn = (ViewBag.Origen == 1) ? "Actualizar Rol" : "Guardar Rol";
+
+}
+
+
+<div class="modal fade" id="modal-editRol" data-backdrop="static" style="display:none">
+    <div class="modal-dialog animated fadeIn">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <h4 class="modal-title text-center">
+                    <i class="fa fa-edit"></i>
+                    <strong>@TituloFormulario</strong>
+                </h4>
+            </div>
+
+            <div id="formularioRol" class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form id="formRol" asp-controller="Account" asp-action="GuardarRol"
+                              data-ajax="true"
+                              data-ajax-method="POST"
+                              data-ajax-begin="onBegin"
+                              data-ajax-complete="onComplete"
+                              data-ajax-success="onSuccessEdit"
+                              data-ajax-failure="onFailEdit">
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Nombre del Rol:</label>
+                                    <div id="contentNombre" class="form-group">
+                                        <label id="lblSuccessNombre" style="display:none; font-size:small" class="control-label" for="NombreProducto"><i class="fa fa-check"></i> Formato Correcto!</label>
+                                        <label id="lblErrorNombre" style="display:none;  font-size:small" class="control-label" for="Nombres"><i class="fa fa-times-circle-o"></i> Formato Incorrecto!</label>
+                                        <input type="text" asp-for="IdRol" class="form-control" readonly="readonly" style="display:none">
+                                        <input type="text" asp-for="Nombre" class="form-control" maxlength="200" placeholder="Escriba el nombre del Rol">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Nombre del Rol:</label>
+                                    <div id="contentNombre" class="form-group">
+                                        <textarea asp-for="Descripcion" class="form-control" placeholder="Escriba la descripción del Rol"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+                            <div class="row">
+                                <div class="col-lg-8 col-lg-offset-2">
+                                    <button class="btn btn-block btn-verde redondeo shadow grow">
+                                        <i class="fa fa-save"></i> @TituloBtn
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function onBegin() {
+        IniciarLoad('#formularioRol');
+    };
+    function onComplete() {
+        CerrarLoad('#formularioRol');
+    };
+
+    function onSuccessEdit(response) {
+        SuccessGuardarJq(response, HideModalRol);
+        ShowRoles();
+    }
+    function onFailEdit(response) {
+        FailMensaje(response.responseJSON);
+    }
+    function HideModalRol() {
+        $('#modal-editRol').modal("hide");
+    }
+</script>

@@ -1,0 +1,152 @@
+﻿
+@using Entidades.Entidades
+
+@model Dominio.EntidadesDto.ActividadDto
+
+@{
+    var TituloFormulario = "Nueva Actividad";
+    var TituloBtn = "Guardar Registro";
+
+}
+
+
+@*LIBRERIA DE INPUT MASK*@
+<script src="~/bower_components/inputmask/dist/min/inputmask/jquery.inputmask.min.js"></script>
+<script src="~/bower_components/inputmask/dist/inputmask/bindings/inputmask.binding.js"></script>
+<link href="~/dist/css/CheckRadio.css" rel="stylesheet" />
+
+<div class="modal fade" id="modal-actividad" style="display:none">
+    <div class="modal-dialog animated fadeIn">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <h4 class="modal-title text-center">
+                    <i class="fa fa-edit"></i>
+                    <strong>@TituloFormulario</strong>
+                </h4>
+            </div>
+
+            <div id="formularioActividad" class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form id="formActividad" asp-controller="Actividad" asp-action="GuardarActividad"
+                              data-ajax="true"
+                              data-ajax-method="POST"
+                              data-ajax-begin="onBegin"
+                              data-ajax-complete="onComplete"
+                              data-ajax-success="onSuccessAct"
+                              data-ajax-failure="onFailAct">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="hidden" asp-for="ActividadId" class="form-control">
+
+                                    <label>Nombre Actividad:</label>
+                                    <div id="" class="form-group">
+                                        <input type="text" asp-for="NombreActividad" class="form-control" placeholder="Escriba el nombre de la Activdad">
+                                        <span asp-validation-for="NombreActividad" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label>Lugar:</label>
+                                    <div id="" class="form-group">
+                                        <input type="text" asp-for="Lugar" class="form-control" placeholder="Escriba el Lugar de la Actividad">
+                                        <span asp-validation-for="Lugar" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Fecha:</label>
+                                    <div id="" class="form-group">
+                                        <div class='input-group date' id="dateFecha">
+                                            <input type="text" asp-for="Fecha" autocomplete="off" placeholder="Seleccione la Fecha de la Actividad" class="form-control">
+                                            <span asp-validation-for="Fecha" class="text-danger"></span>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <label>Tipo Actividad:</label>
+                                    <div style="margin-top:7px!important" class="form-group">                                  
+
+                                        <div class="col-md-12">
+                                            <div class="checkbox checkbox-success checkbox-inline">
+                                                @Html.CheckBoxFor(x => x.EsEspecial)
+                                                <label for="EsEspecial"> Es Especial </label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Descripción:</label>
+                                    <div id="contentDescripcion" class="form-group">
+                                        <textarea asp-for="Descripcion" class="form-control" placeholder="Descripción de la actividad" style="resize:none"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+                            <div class="row">
+                                <div class="col-lg-8 col-lg-offset-2">
+                                    <button type="submit" class="btn btn-block btn-verde redondeo shadow grow">
+                                        <i class="fa fa-save"></i> @TituloBtn
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('#dateFecha').datetimepicker({
+        format: 'DD/MM/YYYY hh:mm A',
+        locale: 'es',
+        useCurrent: true
+    });
+
+
+
+    function onBegin() {
+        IniciarLoad('#formularioActividad');
+    };
+    function onComplete() {
+        // Escondemos el Ajax Loader
+        CerrarLoad('#formularioActividad');
+    };
+
+    function onSuccessAct(response) {
+        ShowActividades();
+        SuccessGuardarJq(response, HideModalActividad);
+
+    }
+    function onFailAct(response) {
+        FailMensaje(response.responseJSON);
+    }
+    function HideModalActividad() {
+        $('#modal-actividad').modal("hide");
+    }
+
+</script>
+
+

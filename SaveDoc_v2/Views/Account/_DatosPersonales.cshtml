@@ -1,0 +1,192 @@
+﻿@model Entidades.Entidades.UsuarioApp
+
+@{
+    var sexo = (Model.Sexo == "M") ? "Masculino" : "Femenino";
+}
+
+<div class="row">
+    <div class=" col-md-12">
+        <div class="box box-success shadow">
+            <div class="box-header with-border">
+                <i class="fa fa-id-card-o"></i>
+                <h3 class="box-title">Datos Personales</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- /.box-header -->
+            <div class="box-body box-profile" style="padding: 10px 20px 10px 20px">
+                <div id="divInfoEst" style="height: 315px;">
+                    <div class="row">
+                        <div class="col-md-3">
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="" class="form-group">
+                                        <label class="col-sm-2 control-label">Nombres:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" value="@Model.Nombres" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div id="" class="form-group">
+                                        <label class="col-sm-2 control-label">Apellidos:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" value="@Model.Apellidos" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Nacimiento:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" value="@ViewBag.FechaNacimiento" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Edad:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" value="@ViewBag.Edad" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Sexo:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" value="@sexo" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Dirección:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" value="@Model.Direccion" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Teléfono:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" value="@Model.PhoneNumber" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Correo:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" value="@Model.Email" class="form-control" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <fieldset style="display: block;
+                                            margin-left: 2px;
+                                            margin-right: 2px;
+                                            padding-top: 0.35em;
+                                            padding-bottom: 1.5em;
+                                            padding-left: 0.75em;
+                                            padding-right: 0.75em;
+                                            border: 2px groove;">
+                                        <legend style="width:auto;
+                                            padding:0px 12px;
+                                            margin:0px;">
+                                            Datos de Usuario
+                                        </legend>
+                                        <div class="row" style="margin-top:15px">
+                                            <div class="col-md-12">
+                                                <div id="" class="form-group">
+                                                    <label class="col-sm-3 control-label">Nombre de Usuario:</label>
+                                                    <div class="col-sm-9">
+                                                        <input type="text" value="@Model.UserName" class="form-control" readonly="readonly">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="col-sm-3 control-label">Rol de Usuario:</label>
+                                                    <div id="" class="col-sm-9">
+                                                        <input type="text" value="@ViewBag.Rol" class="form-control" readonly="readonly">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12" style="padding-left:0px!important;">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label" style="padding-left:0px!important;">Contraseña:</label>
+                                            <div class="col-sm-10">
+                                                [<a href="#" style="color:#01714a" class="form-control-plaintext" onclick="ShowModalChangePass()">Cambiar Contraseña</a>]
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 pull-right">
+                                <div class="row" style="margin-bottom:10px;">
+                                    @if (Model.Sexo == "M")
+                                    {<img class="profile-user-img img-responsive pull-right" style="width:100%; height:230px" src="~/dist/img/avatar5.png" alt="User profile picture">}
+                                    else
+                                    {<img class="profile-user-img img-responsive pull-right" style="width:100%; height:230px" src="~/dist/img/avatar2.png" alt="User profile picture">}
+                                </div>
+
+                                <div class="row" style="margin-top:10px">
+                                    <button class="btn btn-block btn-social bg-olive pull-right" style=" max-width:100%;" type="button" onclick="ShowModalEdit(1,'')"><i class="fa fa-pencil-square-o"></i>&nbsp;<b>Editar Información</b></button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

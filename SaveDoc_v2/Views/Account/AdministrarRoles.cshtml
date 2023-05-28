@@ -1,0 +1,61 @@
+﻿@{
+    ViewBag.Title = "Roles";
+    ViewBag.SubTitle = "Administrar Roles";
+    ViewBag.url = @Url.Action("AdministrarRoles", "Account");
+    Layout = "~/Views/Shared/_LayoutDoc.cshtml";
+}
+@model Dominio.EntidadesDto.UsuarioDto
+
+<div class="col-md-3" style="padding-left:0px">
+    <button type="button" id="btnNuevoRol" class="btn float-left bg-olive" onclick="ShowModalEditRol(2,'')">
+        <i class="fa fa-plus"></i>
+        Agregar Roles
+    </button>
+</div>
+<br /><br />
+
+<div id="ModalEditRol"></div>
+<div id="viewListaRol" class="animated fadeIn"></div>
+
+
+<script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+    function ShowModalEditRol(origen, id) {
+        var parametros = { Origen: origen, IdRol: id }
+        var url = '@Url.Action("_FormEditRol", "Account")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(parametros),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ModalEditRol').html(response);
+                $('#modal-editRol').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+     function ShowRoles() {
+        var url = '@Url.Action("_TablaRoles", "Account")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#viewListaRol').html(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    $(function () {
+        ShowRoles();
+    });
+
+</script>

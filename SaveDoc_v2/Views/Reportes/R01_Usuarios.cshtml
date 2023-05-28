@@ -1,0 +1,103 @@
+﻿@{
+    Layout = null;
+}
+
+
+<h1>Sistema DocSave!</h1>
+<p>Hola Esto es un reporte de los usuarios del sistema.</p>
+
+
+<style type="text/css">
+    .tg {
+        width: 100%;
+        border-collapse: collapse;
+        border-color: #ccc;
+        border-spacing: 0;
+    }
+
+        .tg td {
+            background-color: #fff;
+            border-color: #ccc;
+            border-style: solid;
+            border-width: 1px;
+            color: #333;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            overflow: hidden;
+            padding: 2px 2px;
+            word-break: normal;
+        }
+
+        .tg th {
+            background-color: #f0f0f0;
+            border-color: #ccc;
+            border-style: solid;
+            border-width: 1px;
+            color: #333;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: normal;
+            overflow: hidden;
+            padding: 4px 4px;
+            word-break: normal;
+        }
+
+        .tg .tg-l1ql {
+            background-color: #dedddd;
+            border-color: #333333;
+            font-weight: bold;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .tg .tg-de2y {
+            border-color: #333333;
+            text-align: left;
+            vertical-align: top;
+        }
+</style>
+<table class="tg">
+
+    <thead>
+        <tr class="bg-olive">
+            <th class="tg-l1ql">
+                Nombres
+            </th>
+            <th class="tg-l1ql">
+                Apellidos
+            </th>
+            <th class="tg-l1ql">
+                Usuario
+            </th>
+            <th class="tg-l1ql">
+                Correo
+            </th>
+            <th class="tg-l1ql">
+                Rol
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="tg-de2y">
+                    @item.Nombres
+                </td>
+                <td class="tg-de2y">
+                    @item.Apellidos
+                </td>
+                <td class="tg-de2y">
+                    @item.UserName
+                </td>
+                <td class="tg-de2y">
+                    @item.Email
+                </td>
+                <td class="tg-de2y">
+                    @item.Rol
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

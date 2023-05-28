@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "Cuenta";
+    ViewBag.SubTitle = "Perfil de Usuario";
+    ViewBag.url = @Url.Action("PerfilUsuario", "Account");
+    Layout = "~/Views/Shared/_LayoutDoc.cshtml";
+}
+
+
+<div id="viewDatosPersonales" class="animated fadeIn"></div>
+<div id="ModalChangePass"></div>
+<div id="ModalEditUsuario"></div>
+
+
+
+<script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+
+    $(function () {
+        ShowDatosPersonales();
+    });
+
+
+    function ShowModalChangePass() {
+        var url = '@Url.Action("_CambiarContra", "Account")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ModalChangePass').html(response);
+                $('#modal-changePass').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function ShowDatosPersonales() {
+        var url = '@Url.Action("_DatosPersonales", "Account")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            success: function (response) {
+                $('#viewDatosPersonales').html(response);
+            },
+            error: function (response) { console.log(response);}
+        });
+    }
+
+    function ShowModalEdit(origen, id) {
+        var parametros = { Origen: origen, IdUser: id }
+        var url = '@Url.Action("_FormEditUsuario", "Account")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(parametros),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ModalEditUsuario').html(response);
+                $('#modal-editUser').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+</script>
+

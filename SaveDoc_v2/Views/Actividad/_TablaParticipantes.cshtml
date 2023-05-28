@@ -1,0 +1,73 @@
+﻿
+@using Entidades.Entidades
+
+@model List<Dominio.EntidadesDto.PersonalDto>
+
+@*LIBRERIA DE INPUT MASK*@
+<script src="~/bower_components/inputmask/dist/min/inputmask/jquery.inputmask.min.js"></script>
+<script src="~/bower_components/inputmask/dist/inputmask/bindings/inputmask.binding.js"></script>
+<link href="~/dist/css/CheckRadio.css" rel="stylesheet" />
+
+
+
+<div class="row animated fadeIn">
+    <div class="col-md-12">
+        <table id="tablaParticipantes" class="table table-hover dataTable" style="border: 1px solid #dddddd;" role="grid">
+            <button onclick="ShowFiltrosPropuesta();" class="pull-right btn bg-olive grow" style="margin-left:10px!important">
+                <i class="fa fa-share-square-o"></i>
+                Proponer Personal
+            </button>
+            <thead>
+                <tr class="bg-olive">
+                    <th class="text-center">
+                        Seleccionar
+                    </th>
+                    <th class="text-center">
+                        Nombres
+                    </th>
+                    <th class="text-center">
+                        Apellidos
+                    </th>
+                    <th class="text-center">
+                        Municipio
+                    </th>
+                    <th class="text-center">
+                        Oficina
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var Nombres = item.PrimerNombre + " " + item.SegundoNombre;
+                    var Apellidos = item.PrimerApellido + " " + item.SegundoApellido;
+                    var check = item.EsParticipante ? "checked" : "";
+
+                <tr>
+                    <td class="text-justify">
+                        <div class="checkbox checkbox-success checkbox-inline">
+                            <input id="ck-@item.PersonalId" type="checkbox" value="@item.PersonalId" @check>
+                            <label for="ck-@item.PersonalId"> Convocado </label>
+                        </div>
+                    </td>
+                    <td class="text-justify">
+                        @Nombres
+                    </td>
+                    <td class="text-justify">
+                        @Apellidos
+                    </td>
+                    <td class="text-justify">
+                        @item.MunicipioDes
+                    </td>
+                    <td class="text-justify">
+                        @item.Oficina.Nombre
+                    </td>
+
+                </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+

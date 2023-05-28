@@ -1,0 +1,95 @@
+﻿@*SELECT MULTIPLE*@
+<link href="~/bower_components/Select_Bootstrap/bootstrap-select.min.css" rel="stylesheet" />
+<script src="~/bower_components/Select_Bootstrap/bootstrap-select.min.js"></script>
+<script src="~/bower_components/Select_Bootstrap/defaults-es_ES.min.js"></script>
+
+<link href="~/dist/css/CheckRadio.css" rel="stylesheet" />
+
+<div class="modal fade shadow" id="modal-filtroPersonal" data-backdrop="static" style="display:none; z-index:10000">
+    <div class="modal-dialog animated fadeIn" style="max-width: 500px!important;">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <h4 class="modal-title text-center">
+                    <i class="fa fa-edit"></i>
+                    <strong>Datos de Busqueda</strong>
+                </h4>
+            </div>
+
+            <div id="formularioBusquedaParticipante" class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Cantidad Req:</label>
+                        <div id="" class="form-group">
+                            <input type="number" id="cantidadFiltro" min="1" value="1" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>De Managua:</label>
+                        <div style="margin-top:7px!important" class="form-group">
+                            <div class="col-md-12">
+                                <div class="checkbox checkbox-success checkbox-inline">
+                                    <input type="checkbox" id="EsManagua" checked />
+                                    <label for="EsManagua"> Sí </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Participativo:</label>
+                        <div style="margin-top:7px!important" class="form-group">
+                            <div class="col-md-12">
+                                <div class="checkbox checkbox-success checkbox-inline">
+                                    <input type="checkbox" id="EsParticipativo" />
+                                    <label for="EsParticipativo"> Sí </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <label>Genero:</label>
+                        <div id="" class="form-group">
+                            <select class="form-control" id="generoFiltro">
+                                <option value="0">..:: Seleccione una Opción ::..</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                                <option value="" selected="selected">Ambos</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Execpciones:</label>
+                        <div id="" class="form-group">
+                            <select class="form-control" id="excepcionFiltro" data-live-search="true" multiple data-actions-box="true" title="..:: Seleccione una Opción ::.." asp-items="@ViewBag.Observaciones"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <button type="button" class="btn btn-block btn-verde redondeo shadow grow" onclick="CargarPropuesta()">
+                                <i class="fa fa-save"></i> Buscar Personal
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        ShowParticipante();
+        $('#excepcionFiltro').selectpicker();
+    });
+</script>

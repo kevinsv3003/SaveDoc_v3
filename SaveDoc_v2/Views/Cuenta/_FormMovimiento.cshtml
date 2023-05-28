@@ -1,0 +1,145 @@
+﻿@model Dominio.EntidadesDto.MovimientoDto
+@*SELECT BOOTSTRAP*@
+<link href="~/bower_components/Select_Bootstrap/bootstrap-select.min.css" rel="stylesheet" />
+<script src="~/bower_components/Select_Bootstrap/bootstrap-select.min.js"></script>
+<script src="~/bower_components/Select_Bootstrap/defaults-es_ES.min.js"></script>
+
+@{ 
+    var FechaMovimiento = Model.MovimientoId > 0 ? Model.FechaMovimiento : DateTime.Now;
+    var btnGuardar = Model.MovimientoId > 0 ? "Actualizar Movimiento" : "Guardar Movimiento";
+}
+
+<div class="modal fade shadow" id="modal-FormularioMovimiento" style="display:none; z-index:10000">
+    <div class="modal-dialog animated fadeIn" style="width: 780px!important;">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <h4 class="modal-title text-center">
+                    <i class="fa fa-refresh"></i>
+                    <strong>Nuevo Movimiento</strong>
+                </h4>
+            </div>
+            <form asp-controller="Cuenta" asp-action="GuardarMovimiento" enctype="multipart/form-data"
+                  data-ajax="true"
+                  data-ajax-method="POST"
+                  data-ajax-begin="onBegin"
+                  data-ajax-complete="onComplete"
+                  data-ajax-success="onSuccessCuenta"
+                  data-ajax-failure="onFailCuenta">
+                <div id="formularioDatosMovimiento" class="modal-body">
+
+                    <input type="hidden" asp-for="CuentaId" value="@ViewBag.CuentaId" />
+                    <input type="hidden" asp-for="MovimientoId"/>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Monto:</label>
+                            <div class="input-group">
+                                <span class="input-group-addon text-bold">@ViewBag.SimboloCuenta</span>
+                                <input type="text" asp-for="Monto" min="1" class="form-control" placeholder="Digite el monto" autofocus>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Tipo Movimiento:</label>
+                            <div id="" class="form-group">
+                                <select class="form-control" asp-for="TipoMovimientoId" data-actions-box="true" title="..:: Seleccione una Opción ::.." asp-items="@ViewBag.TipoMovimientos"></select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Fecha:</label>
+                            <div id="" class="form-group">
+                                <div class='input-group date' id="dateFechaMovimiento">
+                                    <input type="text" asp-for="FechaMovimiento" value="@FechaMovimiento" autocomplete="off" placeholder="Seleccione la Fecha" class="form-control">
+                                    <span asp-validation-for="FechaMovimiento" class="text-danger"></span>
+                                    <span class="input-group-addon">
+                                        <span class="fa fa-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Tipo Movimiento:</label>
+                            <div id="" class="form-group">
+                                <textarea class="form-control" style="resize:none" asp-for="Concepto" placeholder="Digite el concepto del movimiento"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2">
+                            <button type="submit" class="btn btn-block btn-verde redondeo shadow grow">
+                                <i class="fa fa-save"></i> @btnGuardar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="~/bower_components/inputmask/dist/jquery.inputmask.bundle.js"></script>
+
+<script>
+    $(function () {
+        activarCampos();
+        focusMonto();
+    });
+
+    function focusMonto() {
+        $("#modal-FormularioMovimiento").on('shown.bs.modal', function () {
+            $('#Monto').focus();
+        });
+    }
+
+    function activarCampos() {
+        let movimientoId = $('#MovimientoId').val();
+        $('#dateFechaMovimiento').datetimepicker({
+            format: 'DD/MM/YYYY hh:mm A',
+            locale: 'es',
+            useCurrent: true
+        });        
+        $('#TipoMovimientoId').selectpicker();
+        if (movimientoId == 0) {
+            $('#Monto').val("");
+            $("#TipoMovimientoId option[value=1]").prop('selected', true);
+            $('#TipoMovimientoId').selectpicker('refresh');
+        }
+        $('#Monto').inputmask('Regex', { regex: "^[0-9.$]*$" });
+    }
+
+    function onBegin() {
+        IniciarLoad('#formularioDatosMovimiento');
+    };
+    function onComplete() {
+        CerrarLoad('#formularioDatosMovimiento');
+    };
+    function onSuccessCuenta(response) {
+         LimpiarCamposMovimientos();
+         SuccessGuardarJq(response, cargarDatosCuenta);
+         
+    }
+
+    function onFailCuenta(response) {
+        console.log(response);
+        FailMensaje(response.responseJSON);
+    }
+
+    function LimpiarCamposMovimientos() {
+        $('#Monto').val("");
+        $('#Concepto').val("");
+        $("#TipoMovimientoId option[value=1]").prop('selected', true);
+        $('#TipoMovimientoId').selectpicker('refresh');
+        $('#Monto').focus();
+    }
+
+</script>

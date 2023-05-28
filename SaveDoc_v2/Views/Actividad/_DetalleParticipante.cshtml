@@ -1,0 +1,148 @@
+﻿
+@using Entidades.Entidades
+
+@model Dominio.EntidadesDto.DetalleActividadDto
+
+@{
+    var participante = Model.DetalleActividadId > 0 ? Model.Personal.PrimerNombre + " " + Model.Personal.PrimerApellido : "";
+}
+
+<div id="formularioDetalleParticipante" class="animated fadeIn">
+
+    @if (Model.DetalleActividadId > 0)
+    {
+        <form id="formPart" asp-controller="Actividad" asp-action="GuardarDetalleParticipante"
+              data-ajax="true"
+              data-ajax-method="POST"
+              data-ajax-begin="onBeginPart"
+              data-ajax-complete="onCompletePart"
+              data-ajax-success="onSuccessPart"
+              data-ajax-failure="onFailPart">
+
+            <div class="row">
+                <div class="col-md-7">
+                    <input type="hidden" asp-for="DetalleActividadId" />
+                    <input type="hidden" asp-for="ActividadId" />
+                    <input type="hidden" asp-for="PersonalId" />
+
+                    <label>Participante:</label>
+                    <div id="" class="form-group">
+                        <input type="text" value="@participante" readonly class="form-control">
+                    </div>
+                </div>
+                
+                <div class="col-md-5">
+                    <label>Req. Transporte:</label>
+                    <div class="form-group">
+
+                        <div class="col-md-4">
+                            <div class="radio radio-success">
+                                @Html.RadioButtonFor(x => x.Transporte, true, new { id = "SiTransporte" })
+                                <label for="SiTransporte"> Sí </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="radio radio-danger">
+                                @Html.RadioButtonFor(x => x.Transporte, false, new { id = "NoTransporte", @checked = true })
+                                <label for="NoTransporte"> No </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-7">
+                    <label>Asistió:</label>
+                    <div class="form-group">
+
+                        <div class="col-md-4">
+                            <div class="radio radio-success">
+                                @Html.RadioButtonFor(x => x.Asistio, true, new { id = "SiAsistio" })
+                                <label for="SiAsistio"> Sí </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="radio radio-danger">
+                                @Html.RadioButtonFor(x => x.Asistio, false, new { id = "NoAsistio", @checked = true })
+                                <label for="NoAsistio"> No </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <label>Justiicado:</label>
+                    <div class="form-group">
+
+                        <div class="col-md-4">
+                            <div class="radio radio-success">
+                                @Html.RadioButtonFor(x => x.Justificado, true, new { id = "SiJustifico" })
+                                <label for="SiJustifico"> Sí </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="radio radio-danger">
+                                @Html.RadioButtonFor(x => x.Justificado, false, new { id = "NoJustifico", @checked = true })
+                                <label for="NoJustifico"> No </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <label>Observación:</label>
+                    <div id="" class="form-group">
+                        <textarea asp-for="Observacion" class="form-control" style="resize:none; height:65px"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <button type="submit" class="btn btn-block btn-verde redondeo shadow grow">
+                        <i class="fa fa-save"></i> Guardar Detalle
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+
+
+
+    }
+    else
+    {
+        <p class="text-center text-muted">Seleccione un participante</p>
+
+    }
+
+</div>
+
+
+
+<script>
+
+    function onBeginPart() {
+        IniciarLoad('#formularioDetalleParticipante');
+    };
+    function onCompletePart() {
+        // Escondemos el Ajax Loader
+        CerrarLoad('#formularioDetalleParticipante');
+    };
+
+    function onSuccessPart(response) {
+        //SuccessMensajeAlerta(response);
+        toastr["success"]("Se guardó la observación correctamente", "Excelente");
+    }
+    function onFailPart(response) {
+        FailMensaje(response.responseJSON);
+    }
+</script>

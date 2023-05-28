@@ -1,0 +1,84 @@
+﻿@using Dominio.EntidadesDto
+@using Infraestructura.Transversal
+@{
+    ViewBag.Title = "Areas";
+    ViewBag.SubTitle = "Almacen de áreas";
+    ViewBag.url = @Url.Action("Index", "Home");
+    ViewBag.Regresar = @Url.Action("Index", "Home");
+    Layout = "~/Views/Shared/_LayoutDoc.cshtml";
+}
+<link href="~/dist/css/AreaEstilos.css" rel="stylesheet" />
+<div class="col-md-3" style="padding-left:0px">
+    <button type="button" id="btnNuevoDoc" class="btn float-left bg-olive" onclick="showModalFormArea(0)">
+        <i class="fa fa-plus"></i>
+        Agregar Áreas
+    </button>
+</div>
+
+<br />
+<br />
+<br />
+
+<div id="viewCuadroAreas" class="animated fadeIn"></div>
+<div id="ModalFormularioArea"></div>@*Modal de formulario Area*@
+<br />
+
+<script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+
+    $(function () {
+        showCuadroArea();
+    });
+
+    function showCuadroArea() {
+
+        var url = '@Url.Action("_ListaAreaCuadro", "Area")';
+            $.ajax({
+                type: "POST",
+                url: url,
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                async: false,
+                success: function (response) {
+                    $('#viewCuadroAreas').html(response);
+                },
+                error: function (response) { console.log(response);}
+            });
+        //IniciarLoad('#divGrupos');
+        //setTimeout(function () {
+        //    CerrarLoad('#divGrupos');
+        //}, 700);
+    }
+
+    function showModalFormArea(AreaId) {
+        var url = '@Url.Action("_FormularioArea", "Area")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(AreaId),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ModalFormularioArea').html(response);
+                $('#modal-area').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+                FailGuardar(response);
+            }
+        });
+    }
+
+    function SuccessGuardar(data) {
+        console.log(data);
+        toastr.success(data, 'Excelente', { timeOut: 5000 });
+
+    }
+    function FailGuardar(data) {
+        console.log(data);
+        toastr.error(data.responseJSON, 'Error', { timeOut: 5000 });
+    }
+
+
+
+</script>

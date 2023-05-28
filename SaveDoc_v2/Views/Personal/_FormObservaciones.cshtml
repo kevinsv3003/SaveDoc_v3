@@ -1,0 +1,100 @@
+﻿@using Entidades.Entidades
+
+@model List<Dominio.EntidadesDto.ObservacionDto>
+
+@{
+    var personalId = (ViewBag.PersonalId);
+
+}
+
+<div class="box box-success shadow">
+    <div class="box-header with-border">
+        <i class="fa fa-comments-o"></i>
+        <h3 class="box-title">Observaciones</h3>
+
+        <div id="toolsObser" class="box-tools pull-right">
+            <button id="btnMini" type="button" class="btn btn-box-tool" onclick="ocultarPanel('#iconPanelObservacion', '#formObservaciones');">
+                <i id="iconPanelObservacion" class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="formObservaciones" class="box-body" style="max-height: 410px; overflow-y: auto; padding: 20px 30px;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="input-group input-group-sm">
+                    <input id="obser" type="text" placeholder="Nueva Observación" class="form-control">
+                    <span class="input-group-btn">
+                        <button type="button" onclick="SaveObservaciones(@personalId)" title="Agregar Observación" class="btn bg-olive btn-flat">Agregar!</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <hr style="margin-bottom:5px !important; margin-top:15px !important;">
+        <ul class="nav nav-pills nav-stacked">
+            @if (Model != null)
+            {
+
+                @foreach (var item in Model)
+                {
+                    <li><a href="#" title="Eliminar Observación" onclick="ConfirmarEliminado(_EliminarObservacion, @item.ObservacionId)"><i class="fa fa-check-square-o text-green"></i>@item.ObservacionDet</a></li>
+                }
+            }
+        </ul>
+    </div>
+    
+
+</div>
+
+<script>
+    function SaveObservaciones(personalId) {
+        IniciarLoad('#formObservaciones');
+        debugger;
+        var observacion = $('#obser').val();
+        var url = '@Url.Action("saveObservacion", "Personal")';
+        var data = { personalId: personalId, observacion: observacion };
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                contentType: "application/x-www-form-urlencoded",
+                dataType: "html",
+                success: function (response) {
+                    ShowObservaciones(personalId);
+                    //SuccessGuardarJq(response, vacio);
+                    CerrarLoad('#formObservaciones');
+                },
+                error: function (response) {
+                    FailGuardar('Se produjo un error al actualizar su información!!');
+                    CerrarLoad('#formObservaciones');
+                }
+            });
+    }
+
+    function _EliminarObservacion(ObservacionId) {
+        IniciarLoad('#formObservaciones');
+        var url = '@Url.Action("_EliminarObservacion", "Personal")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(ObservacionId),
+            contentType: "application/json; utf-8",
+            dataType: "html",
+            success: function (response) {
+                console.log(response);
+                ShowObservaciones(@personalId);
+                CerrarLoad('#formObservaciones');
+                SuccessGuardarJq('Se ha eliminado la observación correctamente!!',vacio);
+                //SuccessGuardar(response);
+            },
+            error: function (response) {
+                console.log(response);
+                CerrarLoad('#formObservaciones');
+                FailGuardarJq(response);
+            }
+        });
+    }
+</script>
+
+

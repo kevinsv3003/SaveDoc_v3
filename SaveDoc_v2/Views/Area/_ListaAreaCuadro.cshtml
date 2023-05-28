@@ -1,0 +1,68 @@
+﻿@model List<Dominio.EntidadesDto.AreaDto>
+<link href="~/dist/css/AreaEstilos.css" rel="stylesheet" />
+
+<div class="box box-success ">
+    <div class="box-header with-border">
+        <i class="fa fa-shopping-bag"></i>
+        <h3 class="box-title">Listado de áreas</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div id="divGrupos" style="height: 730px; overflow-y: auto">
+            <div class="row" style="margin-right: 0px">                
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-3">
+
+                        <div class="box box-default shadow animated fadeIn" style="box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);">
+                            <div class="box-header with-border fondocard" style="background-image: url(@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.Fondo)))">
+                                <h3 class="texto">@item.Nombre</h3>
+                            </div>
+                            <div class="box-body descripciones">
+                                <div class="panel-text text-muted">Area Nº: <span>@item.AreaId</span></div>
+                                <div class="panel-text text-muted text-cute">Descripción: <span>@item.Descripcion</span></div>
+                            </div>
+                            <div class="box-footer text-center">
+                                <button class="btn bg-olive fadeIn" onclick="showModalFormArea(@item.AreaId)">
+                                    <i class="fa fa-edit"></i>
+                                    Modificar Área
+                                </button>
+                                <button class="btn btn-default fadeIn pull-right" title="Eliminar área" onclick="ConfirmarEliminado(EliminarArea,@item.AreaId)">
+                                    <i class="fa fa-trash-o" style="font-size:19px"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    
+    function EliminarArea(AreaId) {
+        var url = '@Url.Action("_EliminarArea", "Area")';        
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(AreaId),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                showCuadroArea();
+                SuccessGuardarJq(response, vacio);
+                //SuccessGuardar(response);
+            },
+            error: function (response) {
+                console.log(response);
+                FailGuardarJq(response);
+            }
+        });
+    }   
+    
+</script>

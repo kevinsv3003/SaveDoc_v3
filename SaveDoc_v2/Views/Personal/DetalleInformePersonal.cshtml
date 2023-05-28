@@ -1,0 +1,272 @@
+﻿@{
+    ViewBag.Title = "Informacion";
+    ViewBag.SubTitle = "Reporte Personal";
+    ViewBag.url = @Url.Action("DetalleInformePersonal", "Personal", Model);
+    ViewBag.Regresar = @Url.Action("Index", "Personal");
+    Layout = "~/Views/Shared/_LayoutDoc.cshtml";
+}
+@model Dominio.EntidadesDto.PersonalDto
+@{
+
+    var nombre = Model.PrimerNombre + " " + Model.PrimerApellido;
+    var imagen = Model.Genero == null ? "default-50x50.gif" : (Model.Genero.Equals("Masculino") ? "avatar5.png" : "avatar2.png");
+    var clasificacionActivo = ViewBag.PorcentajeAsistencia >= 80 ? "BUENO" :
+                                ViewBag.PorcentajeAsistencia >= 30 ? "REGULAR" :
+                                "MALO";
+    var oficina = Model.Oficina != null ? Model.Oficina.Descripcion : "";
+}
+
+
+
+<script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+
+<div id="ModalDetalleAct"></div>
+
+
+
+<div class="row">
+
+    <div class=" col-md-3">
+        <div class="row">
+            <div class=" col-md-12">
+                <div class="box box-success shadow">
+                    <div class="box-header with-border">
+                        <i class="fa fa-user"></i>
+                        <h3 class="box-title">Datos Generales</h3>
+
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" id="btnMin" onclick="ocultarPanel('#iconBtnMin', '#divInfoPersonal');">
+                                <i id="iconBtnMin" class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="divInfoPersonal" class="box box-success">
+                        <div class="box-body box-profile" @*style="padding: 10px 20px 10px 20px;/* height: 500px; */"*@>
+
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div class="">
+                                        <img class="profile-user-img img-responsive img-circle" src="~/dist/img/@imagen" alt="User profile picture">
+                                        <h3 class="profile-username text-center">@nombre</h3>
+                                        <p class="text-muted text-center">@oficina</p>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div id="cuadroClasificacion" class="info-box bg-green-gradient animated fadeIn" >
+                                            <span class="info-box-icon"><i id="iconoClasificacion" class="fa fa-thumbs-up animated fadeIn"></i></span>
+
+                                            <div class="info-box-content">
+                                                <span class="info-box-text"></span>
+                                                <span id="tipoClas" class="info-box-number">@clasificacionActivo</span>
+
+                                                <div class="progress">
+                                                    <div class="progress-bar" style="width: @ViewBag.PorcentajeAsistencia%"></div>
+                                                </div>
+                                                <span id="porAsistPersona" class="progress-description animated fadeIn">
+                                                    @ViewBag.PorcentajeAsistencia% de participación en actividades mensuales
+                                                </span>
+                                            </div>
+                                            <!-- /.info-box-content -->
+                                        </div>
+                                    </div>
+                                    <div class="box-body box-solid" style="display: block;">
+                                        <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                        <div class="col-md-12">
+                                            <strong><i class="fa fa-credit-card margin-r-5"></i>Cédula</strong>
+                                            <p class="text-muted">@Model.Cedula</p>
+                                            <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                        </div>
+                                        <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                        <div class="col-md-12">
+                                            <strong><i class="fa fa-phone margin-r-5"></i>Teléfono</strong>
+                                            <p class="text-muted">@Model.Telefono</p>
+                                            <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <strong><i class="fa fa-shield margin-r-5"></i>Municipio</strong>
+                                            <p class="text-muted">@Model.DepartamentoDes</p>
+                                            <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <strong><i class="fa fa-map-marker margin-r-5"></i>Dirección</strong>
+                                            <p class="text-muted">@Model.Direccion</p>
+                                            <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <button class="btn btn-block bg-olive" onclick="GenerarReporteDetallePersonal()">
+                                            <i class="fa fa-print"></i>
+                                            Generar Reporte Personal
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class=" col-md-12">
+                <div id="ObservacionesPersonal"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div id="ActividadesPersonal"></div>
+    </div>
+</div>
+
+
+<script>
+
+    function ocultarPanel(icono, panel) {
+        debugger;
+        $(panel).toggle("swing");
+        if ($(icono).hasClass("fa-minus")) {
+            $(icono).removeClass("fa-minus");
+            $(icono).addClass("fa-plus");
+        } else if ($(icono).hasClass("fa-plus")) {
+            $(icono).removeClass("fa-plus");
+            $(icono).addClass("fa-minus");
+        }
+    }
+
+    function ShowObservaciones(personalId) {
+        console.log(personalId);
+        var url = '@Url.Action("_FormObservaciones", "Personal")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(personalId),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ObservacionesPersonal').html(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function ShowActividades(personalId) {
+        console.log(personalId);
+        var url = '@Url.Action("_ActividadesPersonal", "Personal")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(personalId),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ActividadesPersonal').html(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function ShowModalDetalleAct(actividadId) {
+
+        var url = '@Url.Action("_DetalleActividad", "Actividad")';
+        var personalId = @Model.PersonalId;
+        var data = { actividadId: actividadId, personalId: personalId };
+        console.log(data);
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "html",
+            success: function (response) {
+                $('#ModalDetalleAct').html(response);
+                $('#modal-detalleActividad').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+
+
+    }
+
+    function ShowDetalleParticipante(detalleActividadId) {
+
+        var url = '@Url.Action("_DetalleParticipante", "Actividad")';
+        $.ajax({
+            data: JSON.stringify(detalleActividadId),
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#detalleParticipante').html(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+
+    }
+
+    function GenerarReporteDetallePersonal() {
+
+        var personalId = @Model.PersonalId;
+
+        var host = window.location.origin;
+        var url = host + '/Personal/GenerarReporteDetallePersonal?personalId=' + personalId;
+        window.open(url);
+    }
+
+    function ClasificacionActividades(clasificacion) {
+        $('#cuadroClasificacion').removeClass();
+        $('#iconoClasificacion').removeClass();
+        if (clasificacion >= 80) {
+            $('#tipoClas').html("BUENO");
+            $('#cuadroClasificacion').addClass("info-box bg-green-gradient");
+            $('#iconoClasificacion').addClass("fa fa-thumbs-up");
+        }
+        else if (clasificacion >= 30) {
+            $('#tipoClas').html("REGULAR");
+            $('#cuadroClasificacion').addClass("info-box bg-yellow-gradient");
+            $('#iconoClasificacion').addClass("fa fa-balance-scale");
+        }
+        else {
+            $('#tipoClas').html("MALO");
+            $('#cuadroClasificacion').addClass("info-box bg-red-gradient");
+            $('#iconoClasificacion').addClass("fa fa-thumbs-down");
+        }
+
+        $('#porAsistPersona').html(clasificacion + '% de participación en actividades mensuales');
+        //$('#porAsistPersona').append(clasificacion+'% de participación en actividades mensuales');
+    }
+
+    $(function () {
+        ShowObservaciones(@Model.PersonalId);
+        ShowActividades(@Model.PersonalId);
+        ClasificacionActividades(@ViewBag.PorcentajeAsistencia);
+    });
+
+
+    function SuccessGuardar(data, funcion) {
+        console.log(data);
+        SuccessGuardarJq(data, funcion);
+
+    }
+    function FailGuardar(data) {
+        console.log(data);
+        FailMensaje(data);
+    }
+
+</script>

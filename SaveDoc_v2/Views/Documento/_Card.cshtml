@@ -1,0 +1,184 @@
+﻿@model Infraestructura.Transversal.Paginador<Dominio.EntidadesDto.DocumentoDto>
+
+<style>
+    .fondocard {
+        background: rgba(5, 18, 44, 0.09);
+        /*background-image: url(../dist/img/univ.jpg);*/
+        color: white !important;
+        height: 115px; /* You must set a specified height */
+        background-position: center; /* Center the image */
+        background-size: 540px;
+        background-repeat: no-repeat;
+    }
+
+    .texto {
+        margin-top: 5px;
+        margin-bottom: 0px;
+        text-align: center;
+        align-self: center;
+    }
+
+    .descripciones {
+        height: 100px;
+        overflow-y: auto
+    }
+</style>
+
+
+
+<div class="box box-success ">
+    <div class="box-header with-border">
+        <i class="fa fa-shopping-bag"></i>
+        <h3 class="box-title">Listado de Documentos</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div id="divGrupos">
+
+            <div class="row">
+                @foreach (var item in Model.Resultado)
+                {
+
+                    <div class="col-md-3">
+
+                        <div class="box box-default shadow animated fadeIn" style="box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);">
+                            <div class="box-header with-border fondocard" style="background-image: url(@string.Format("data:image/png;base64,{0}", Convert.ToBase64String(item.Fondo)))">
+                                <h3 class="texto">@item.Nombre</h3>
+                            </div>
+                            <div class="box-body descripciones">
+                                <div class="panel-text text-muted">Doc Nº: <span>@item.DocumentoId</span></div>
+                                @*<div class="panel-text text-muted">Nombre: <span>@item.Nombre</span></div>*@
+                                <div class="panel-text text-muted">Área: <span>@item.NombreArea</span></div>
+                                <div class="panel-text text-muted text-cute">Descripción: <span>@item.Descripcion</span></div>
+                                @*<div class="panel-text text-muted">Fecha: <span>@solicitud.FechaCreacion.ToString("yyyy/MM/dd")</span></div>*@
+                            </div>
+                            <div class="box-footer">
+
+                                <div class="col-md-8 " style="padding:0;margin:0px">
+                                    <button class="form-control btn bg-olive fadeIn" title="Descargar Documento" onclick="DescargarDocumento(@item.DocumentoId)">
+                                        <i class="fa fa-download"></i>
+                                        Descargar
+                                    </button>
+                                </div>
+                                <div class="col-md-2 " style="padding:0">
+                                    <a class="form-control btn btn-default fadeIn grow" title="Modificar Documento" onclick="showModalNuevoProducto(@item.DocumentoId)">
+                                        <i class="fa fa-edit" style="font-size:19px"></i>
+                                    </a>
+                                </div>
+                                <div class="col-md-2 " style="padding:0">
+                                    <a class="form-control btn btn-default fadeIn grow" title="Eliminar Documento" onclick="ConfirmarEliminado(EliminarDoc,@item.DocumentoId)">
+                                        <i class="fa fa-trash-o" style="font-size:19px"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <li id="liAnt" class="page-item">
+                                <span id="btnAnt" class="page-link navpoint" onclick="Navegacion((@Model.PaginaActual - 1), areaSeleccionada())" style="cursor: pointer; color:#666">Anterior</span>
+                            </li>
+                            @for (var i = 1; i <= Model.TotalPaginas; i++)
+                            {       
+                                if (i == Model.PaginaActual)
+                                {
+                                    <li class="page-item active">
+                                        <span class="page-link navpoint bg-olive" onclick="Navegacion(@i, areaSeleccionada())" style="cursor: pointer;color:#666">@i</span>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item">
+                                        <span class="page-link navpoint" onclick="Navegacion(@i, areaSeleccionada())" style="cursor: pointer;color:#666">@i</span>
+                                    </li>
+                                }
+                            }
+
+                            <li id="liSig" class="page-item">
+                                <span id="btnSig" class="page-link navpoint" onclick="Navegacion((@Model.PaginaActual + 1), areaSeleccionada())" style="cursor: pointer; color:#666;">Siguiente</span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function DescargarDocumento(id) {
+        var host = window.location.origin;
+        var url = host + '/Documento/_DescargarDocumento?id=' + id;
+        window.open(url);
+    }
+
+    function EliminarDoc(docId) {
+        var url = '@Url.Action("_EliminarDocumento", "Documento")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(docId),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                IniciarLoad('#divGrupos');
+                setTimeout(function () {
+                    var areaid = $('#sltArea option:selected').val();
+                    areaid = areaid == 0 ? 99 : areaid;
+                    $("#sltArea").val(0);
+                    SuccessGuardarJq(response, vacio);
+                    buscarDocumento(areaid);
+                    CerrarLoad('#divGrupos');
+                }, 700);
+            },
+            error: function (response) {
+                console.log(response);
+                CerrarLoad('#divGrupos');
+                FailGuardarJq(response);
+            }
+        });
+    }
+
+    $(function () {
+        botonesPaginacion();
+     });
+
+    function botonesPaginacion() {
+       // debugger;
+        if (@Model.Resultado.Count() < 4) {
+            $("#btnSig").css("cursor", "not-allowed");
+            $("#btnSig").css("opacity", "0.65");
+            $('#liSig').addClass('disabled')
+
+        } else {
+            $("#btnSig").css("cursor", "pointer");
+            $("#btnSig").css("opacity", "1");
+            $('#liSig').removeClass('disabled');
+        }
+
+        if (@(Model.PaginaActual - 1) < 1 ) {
+            $("#btnAnt").css("cursor", "not-allowed");
+            $("#btnAnt").css("opacity", "0.65");
+            $('#liAnt').addClass('disabled');
+        } else {
+            $("#btnAnt").css("cursor", "pointer");
+            $("#btnAnt").css("opacity", "1");
+            $('#liAnt').removeClass('disabled');
+        }
+    }
+
+
+</script>

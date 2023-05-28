@@ -1,0 +1,172 @@
+﻿@using Dominio.EntidadesDto
+@using Infraestructura.Transversal
+@{
+    ViewBag.Title = "Acividades";
+    ViewBag.SubTitle = "Gestión de actividades";
+    ViewBag.url = @Url.Action("Index", "Actividad");
+    ViewBag.Regresar = @Url.Action("Index", "Home");
+    Layout = "~/Views/Shared/_LayoutDoc.cshtml";
+}
+@{
+    var PaginadorActividades = ViewBag.PaginadorActividades as Paginador<ActividadDto>;
+}
+
+
+<link href="~/dist/css/AreaEstilos.css" rel="stylesheet" />
+<div class="col-md-3" style="padding-left:0px">
+    <button type="button" id="btnNuevaActividad" onclick="ShowModalFormActividad()" class="btn float-left bg-olive">
+        <i class="fa fa-plus"></i>
+        Agregar Actividad
+    </button>
+</div>
+
+<br />
+<br />
+<br />
+
+<script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+<div id="ModalFormularioActividad"></div>@*Modal de formulario Actividad*@
+<div id="ModalParticipantesActividad"></div>@*Modal de Participantes de la Actividad*@
+<div id="ModalDetalleActividad"></div>@*Modal de Detalle de la Actividad*@
+<div id="ShowActividades" class="animated fadeIn">
+    <partial name="_CardActividades" model="PaginadorActividades" />
+</div>
+
+<br />
+
+<script>
+
+    function ShowModalFormActividad( ) {
+
+        var url = '@Url.Action("_FormActividad", "Actividad")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ModalFormularioActividad').html(response);
+                $('#modal-actividad').modal("show");
+                var form = $('#formActividad')
+                .removeData("validator")
+                .removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(form);
+            },
+            error: function (response) {
+                console.log(response);
+        }
+        });
+    }
+
+    function ShowActividades() {
+        var url = '@Url.Action("_CardActividades", "Actividad")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "html",
+            async: true,
+            success: function (response) {
+                setTimeout(function () {
+                $('#ShowActividades').html(response);
+                }, 200);
+            },
+            error: function (response) {
+                FailMensaje("No se encontró ningun documento relacionado a este nombre");
+            }
+        });
+
+    }
+
+
+    function ShowModalParticipanteActividad(actividadId) {
+
+        var url = '@Url.Action("_AgregarParticipantes", "Actividad")';
+        $.ajax({
+            data: JSON.stringify(actividadId),
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ModalParticipantesActividad').html(response);
+                $('#modal-participantes').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+
+    }
+
+
+    function ShowModalDetalleActividad(actividadId) {
+
+        var url = '@Url.Action("_DetalleActividad", "Actividad")';
+        var data = { actividadId: actividadId};
+        $.ajax({
+            data: data,
+            type: "POST",
+            url: url,
+            contentType: "application/x-www-form-urlencoded",
+            dataType: "html",
+            success: function (response) {
+                $('#ModalDetalleActividad').html(response);
+                $('#modal-detalleActividad').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+
+    }
+
+    function ShowDetalleParticipante(detalleActividadId) {
+
+        var url = '@Url.Action("_DetalleParticipante", "Actividad")';
+        $.ajax({
+            data: JSON.stringify(detalleActividadId),
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#detalleParticipante').html(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+
+    }
+
+    function GenerarReporteActividad(actividadId) {
+        var host = window.location.origin;
+        var url = host + '/Actividad/GenerarReporteActividad?actividadId=' + actividadId;
+        window.open(url);
+    }
+    function GenerarReporteParticipante(actividadId) {
+        var host = window.location.origin;
+        var url = host + '/Actividad/GenerarReporteParticipante?actividadId=' + actividadId;
+        window.open(url);
+    }
+
+
+     function Navegacion(pagina, filtro) {
+        IniciarLoad('#divGrupos')
+        console.log(pagina);
+        $.ajax({
+            url: '@Url.Action("_CardActividades", "Actividad")',
+            type: 'GET',
+            cache: false,
+            data: { pagina: pagina, filtro: filtro }
+        }).done(function (result) {
+            setTimeout(function () {
+                $('#ShowActividades').html(result);
+                CerrarLoad('#divGrupos');
+            }, 25);
+
+        });
+    }
+
+</script>

@@ -1,0 +1,166 @@
+﻿@model List<Dominio.EntidadesDto.UsuarioDto>
+@*<script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>*@
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.21/af-2.3.5/b-1.6.3/b-colvis-1.6.3/b-html5-1.6.3/b-print-1.6.3/datatables.min.js"></script>
+
+
+<div class="row">
+    <div class=" col-md-12">
+        <div class="box box-success shadow">
+            <div class="box-header with-border">
+                <i class="fa fa-id-card-o"></i>
+                <h3 class="box-title">Listado de Usuarios  </h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="contentUser" class="box-body box-profile" style="padding: 10px 20px 10px 20px">                
+                <table id="tablaUsuario" class="table table-hover dataTable" style="border: 1px solid #dddddd;" role="grid">
+                    @*<a asp-action="Exportar" asp-controller="Account" class="pull-right btn bg-olive grow"><i class="fa fa-file-excel-o"></i>  Exportar a Excel A</a>*@
+                    <button onclick="Exportar()" class="pull-right btn bg-olive grow" style="margin-left:10px!important">
+                        <i class="fa fa-file-excel-o"></i>
+                        Exportar a Excel
+                    </button>
+                    <button onclick="ExportarPdf()" class="pull-right btn bg-red-active grow">
+                        <i class="fa fa-file-pdf-o"></i>
+                        Exportar a PDF
+                    </button>
+                    <thead>
+                        <tr class="bg-olive">
+                            <th class="text-center">
+                                Nombres
+                            </th>
+                            <th class="text-center">
+                                Apellidos
+                            </th>
+                            <th class="text-center">
+                                Usuario
+                            </th>
+                            <th class="text-center">
+                                Correo
+                            </th>
+                            <th class="text-center">
+                                Rol
+                            </th>
+                            <th class="text-center">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-justify">
+                                    @item.Nombres
+                                </td>
+                                <td class="text-justify">
+                                    @item.Apellidos
+                                </td>
+                                <td class="text-justify">
+                                    @item.UserName
+                                </td>
+                                <td class="text-justify">
+                                    @item.Email
+                                </td>
+                                <td class="text-justify">
+                                    @item.Rol
+                                </td>
+                                <td style="width: 15em;" class="text-right">
+                                    <a class="btn btn-flat bg-olive shadow grow btn-sp btnaccion" onclick="ShowModalEdit(3,'@item.Id')" data-toggle="tooltip" data-html="true" data-placement="left" title="Ver Detalles">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a class="btn btn-flat bg-olive shadow grow btn-sp btnaccion" onclick="_RestaurarContra('@item.Email','@item.UserName')" data-toggle="tooltip" data-html="true" data-placement="left" title="Restaurar Contraseña">
+                                        <i class="fa  fa-refresh"></i>
+                                    </a>
+                                    <a class="btn btn-flat btn-danger shadow grow btn-sp btnaccion" onclick="_Eliminar('@item.Id')" data-toggle="tooltip" data-html="true" data-placement="left" title="Eliminar">
+                                        <i class="fa fa-remove"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        EstiloTabla('#tablaUsuario');
+    });
+
+    function _Eliminar(id) {
+        ConfirmarEliminado(EliminarUsuario, id);
+    }
+
+    function _RestaurarContra(email, username) {
+        ConfirmarRestauracion(RecordarContra, email, username);
+    }
+
+    function RecordarContra(email, username) {
+        IniciarLoad('#contentUser');
+        var model = { Email: email, userName: username }
+        var url = '@Url.Action("RestaurarContra", "Account")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(model),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                console.log(response);
+                SuccessMensaje("Se ha restaurado la contraseña con éxito, se recomiendo cambiarla al iniciar sesión.");
+                CerrarLoad('#contentUser');
+            },
+            error: function (response) {
+                console.log(response);
+                CerrarLoad('#contentUser');
+                FailGuardarJq(response);
+            }
+        });
+    }
+
+    function EliminarUsuario(Id) {
+        IniciarLoad('#contentUser');
+        var url = '@Url.Action("EliminarUsuario", "Account")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(Id),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                console.log(response);
+                ShowUsuarios();
+                SuccessGuardarJq(response, vacio);
+                CerrarLoad('#contentUser');
+            },
+            error: function (response) {
+                console.log(response);
+                CerrarLoad('#contentUser');
+                FailGuardarJq(response);
+            }
+        });
+    }
+
+    function Exportar() {
+        var host = window.location.origin;
+        var url = host + '/Account/Exportar';
+        window.open(url);
+    }
+    function ExportarPdf() {
+        var host = window.location.origin;
+        var url = host + '/Account/ExportarPdf';
+        window.open(url);
+    }
+</script>

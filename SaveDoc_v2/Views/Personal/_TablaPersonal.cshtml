@@ -1,0 +1,190 @@
+﻿@model List<Dominio.EntidadesDto.PersonalDto>
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.21/af-2.3.5/b-1.6.3/b-colvis-1.6.3/b-html5-1.6.3/b-print-1.6.3/datatables.min.js"></script>
+
+
+<div class="row">
+    <div class=" col-md-12">
+        <div class="box box-success shadow">
+            <div class="box-header with-border">
+                <i class="fa fa-id-card-o"></i>
+                <h3 class="box-title">Listado Juventud DGI</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="contentUser" class="box-body box-profile" style="padding: 10px 20px 10px 20px">
+                <table id="tablaPersonal" class="table table-hover dataTable" style="border: 1px solid #dddddd;" role="grid">
+                    <button onclick="ShowFiltrosReporte()" class="pull-right btn bg-olive grow" style="margin-left:10px!important">
+                        <i class="fa fa-fire"></i>
+                        Generar Reporte
+                    </button>
+                    <thead>
+                        <tr class="bg-olive">
+                            <th class="text-center">
+                                Renta
+                            </th>
+                            <th class="text-center">
+                                Área
+                            </th>
+                            <th class="text-center">
+                                Nombres
+                            </th>
+                            <th class="text-center">
+                                Apellidos
+                            </th>
+                            <th class="text-center">
+                                Género
+                            </th>
+                            <th class="text-center">
+                                Cédula
+                            </th>
+                            <th class="text-center">
+                                Teléfono
+                            </th>
+                            <th class="text-center">
+                                Departamento
+                            </th>
+                            <th class="text-center">
+                                Municipio
+                            </th>
+                            <th class="text-center">
+                                Barrio
+                            </th>
+                            <th class="text-center">
+                                Dirección
+                            </th>
+                            <th class="text-center">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var Nombres = item.PrimerNombre + " " + item.SegundoNombre;
+                            var Apellidos = item.PrimerApellido + " " + item.SegundoApellido;
+
+                            <tr>
+                                <td class="text-justify">
+                                    @item.Renta.NombreRenta
+                                </td>
+                                <td class="text-justify">
+                                    @item.Oficina.Nombre
+                                </td>
+                                <td class="text-justify">
+                                    @Nombres
+                                </td>
+                                <td class="text-justify">
+                                    @Apellidos
+                                </td>
+                                <td class="text-justify">
+                                    @item.Genero
+                                </td>
+                                <td class="text-justify">
+                                    @item.Cedula
+                                </td>
+                                <td class="text-justify">
+                                    @item.Telefono
+                                </td>
+                                <td class="text-justify">
+                                    @item.DepartamentoDes
+                                </td>
+                                <td class="text-justify">
+                                    @item.MunicipioDes
+                                </td>
+                                <td class="text-justify">
+                                    @item.BarrioDes
+                                </td>
+                                <td class="text-justify">
+                                    @item.Direccion
+                                </td>
+                                <td style="width: 15em;" class="text-right">
+                                    <a class="btn btn-flat bg-olive shadow grow btn-sp btnaccion" onclick="ShowModalFormPersonal('@item.PersonalId', 2)" data-toggle="tooltip" data-html="true" data-placement="left" title="Editar Información">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a class="btn btn-flat bg-olive shadow grow btn-sp btnaccion" onclick="ShowObservaciones(@item.PersonalId)" data-toggle="tooltip" data-html="true" data-placement="left" title="Ver Observaciones">
+                                        <i class="fa fa-comments-o"></i>
+                                    </a>
+                                    <a class="btn btn-flat bg-olive shadow grow btn-sp btnaccion" href="@Url.Action("DetalleInformePersonal", "Personal", new { personalId = item.PersonalId})" data-toggle="tooltip" data-html="true" data-placement="left" title="Ver Detalle">
+                                        <i class="fa  fa-eye"></i>
+                                    </a>
+                                    <a class="btn btn-flat btn-danger shadow grow btn-sp btnaccion" onclick="" data-toggle="tooltip" data-html="true" data-placement="left" title="Eliminar">
+                                        <i class="fa fa-remove"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        EstiloTablaPersonal('#tablaPersonal');
+        
+    });
+    function EstiloTablaPersonal(Tabla) {
+        $(Tabla).DataTable({
+            "dom": '<"pull-left"f><"pull-right"l>t<"mgt-12"<"pull-left"p><"pull-right"i>>',
+            "paging": true,
+            "lengthMenu": [[15, 20, 25, -1], [15, 20, 25, "Todos"]],
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "scrollX": true,
+            "stateSave": true,
+            buttons: [
+                {
+                    extend: 'pdfHtml5',
+                    text: '<button class="btn bg-red grow"><i class="fa fa-file-pdf-o"></i>  Exportar a PDF</button>',
+                    title: 'ArchivoPDFDatos',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    text: '<button style="margin-left:-12px" class="btn bg-olive grow"><i class="fa fa-file-excel-o"></i>  Exportar a Excel</button>',
+                    title: 'ArchivoExcelDatos',
+                    autoFilter: true,
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                }
+            ],
+            language: {
+                "decimal": "",
+                "emptyTable": "No hay información",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 to 0 of 0 registros",
+                "infoFiltered": "(Filtrado de _MAX_ total registros)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar:",
+                "zeroRecords": "Sin resultados encontrados",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        })
+    }
+</script>

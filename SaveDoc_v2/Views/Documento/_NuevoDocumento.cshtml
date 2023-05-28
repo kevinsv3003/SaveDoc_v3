@@ -1,0 +1,145 @@
+﻿@model Dominio.EntidadesDto.DocumentoDto
+
+@{
+    var TituloFormulario = (Model.DocumentoId > 0) ? "Editar Documento" : "Nuevo Documento";
+    var TituloBtn = (Model.DocumentoId > 0) ? "Actualizar Documento" : "Guardar Documento";
+}
+
+
+
+
+<div class="modal fade" id="modal-documento" data-backdrop="static" style="display:none">
+    <div class="modal-dialog animated fadeIn">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="habilitarbtnNuevoDoc()">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <h4 class="modal-title text-center"><strong>@TituloFormulario</strong></h4>
+            </div>
+
+            <div id="formularioDoc" class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form id="formDoc" asp-controller="Documento" asp-action="SaveDoc" enctype="multipart/form-data"
+                              data-ajax="true"
+                              data-ajax-method="POST"
+                              data-ajax-begin="onBegin"
+                              data-ajax-complete="onComplete"
+                              data-ajax-success="onSuccessDocument"
+                              data-ajax-failure="onFailDocument">
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Documento:</label>
+                                    <div id="contentDocumento" class="form-group">
+                                        <label id="lblErrorArchivo" style="display:none;  font-size:small" class="control-label" for="archivoDoc"><i class="fa fa-times-circle-o"></i> Formato Incorrecto!</label>
+                                        <input asp-for="FileDoc" type="file" class="form-control" placeholder="Seleccione el documento a guardar">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Nombre del Documento:</label>
+                                    <div id="contentNombre" class="form-group">
+                                        <label id="lblErrorNombre" style="display:none;  font-size:small" class="control-label" for="NombreDocumento"><i class="fa fa-times-circle-o"></i> Formato Incorrecto!</label>
+                                        <input type="text" asp-for="Nombre" class="form-control" maxlength="200" placeholder="Escriba el nombre del documento">
+                                        <input type="text" asp-for="DocumentoId" class="form-control" style="display:none">
+                                        <input type="datetime" asp-for="FechaRegistro" class="form-control" style="display:none" value="@DateTime.Now" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Área:</label>
+                                    <div id="contentArea" class="form-group">
+                                        <label id="lblErrorArea" style="display:none;  font-size:small" class="control-label float-right" for="slArea"><i class="fa fa-times-circle-o"></i> Formato Incorrecto!</label>
+                                        @*<select asp-for="AreaId" class="form-control">
+                                                <option value=0 selected>..:: Seleccione un Área ::..</option>
+                                                @foreach (var item in ViewBag.Area)
+                                                {
+                                                    <option value=@item.AreaId>@item.Nombre</option>
+                                                }
+                                            </select>*@
+                                        @Html.DropDownListFor(a => a.AreaId, (IEnumerable<SelectListItem>)(ViewBag.Area), "..:: Seleccione un Área ::..", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Descripción del Documento:</label>
+                                    <div id="contentDescripcion" class="form-group">
+                                        <label id="lblErrorDescripcion" style="display:none;  font-size:small" class="control-label float-right" for="DescripcionDocumento"><i class="fa fa-times-circle-o"></i> Formato Incorrecto!</label>
+                                        <textarea asp-for="Descripcion" class="form-control" placeholder="Describa su documento" style="resize:none"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+                            <div class="row">
+                                <div class="col-lg-8 col-lg-offset-2">
+                                    <button class="btn btn-block btn-verde redondeo shadow grow" id="btnGuardarDoc" type="submit">
+                                        <i class="fa fa-save"></i> @TituloBtn
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function onSuccessDocument(response) {
+        debugger;
+        var areaid = $('#AreaId option:selected').val();
+        $("#sltArea").val(areaid);
+        LimpiarCamposDoc();
+
+        if (@Model.DocumentoId > 0) { SuccessGuardarJq(response, HideModalDocumento) }
+        else { SuccessGuardarJq(response, vacio); }
+        buscarDocumento(areaid);
+    }
+
+    function onFailDocument(response) {
+        habilitarbtnGuadar();
+        FailMensaje(response.responseJSON);
+    }
+
+    function deshabilitarbtnGuadar() {
+        $('#btnGuardarDoc').attr("disabled", true);
+    }
+    function habilitarbtnGuadar() {
+        $('#btnGuardarDoc').attr("disabled", false);
+    }
+
+    function LimpiarCamposDoc() {
+        //$("#Nombre").val("");
+        //$("#FileDoc").val("");
+        //$("#Descripcion").val("");
+        //$("#AreaId").val(1);
+        $('#formDoc')[0].reset();
+    }
+
+    function HideModalDocumento() {
+        $('#modal-documento').modal("hide");
+    }
+
+    function onBegin() {
+        IniciarLoad('#formularioDoc');
+    };
+
+    function onComplete() {
+        // Escondemos el Ajax Loader
+        CerrarLoad('#formularioDoc');
+    };
+</script>

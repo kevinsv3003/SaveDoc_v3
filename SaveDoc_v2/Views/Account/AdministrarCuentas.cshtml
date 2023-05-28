@@ -1,0 +1,61 @@
+﻿@{
+    ViewBag.Title = "Cuentas";
+    ViewBag.SubTitle = "Administrar Cuentas";
+    ViewBag.url = @Url.Action("AdministrarCuentas", "Account");
+    Layout = "~/Views/Shared/_LayoutDoc.cshtml";
+}
+@model Dominio.EntidadesDto.UsuarioDto
+
+<div class="col-md-3" style="padding-left:0px">
+    <button type="button" id="btnNuevoDoc" class="btn float-left bg-olive" onclick="ShowModalEdit(2,    )">
+        <i class="fa fa-plus"></i>
+        Agregar Usuarios
+    </button>
+</div>
+<br /><br />
+
+<div id="ModalEditUsuario"></div>
+<div id="viewListaUsuarios" class="animated fadeIn"></div>
+
+
+<script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+    function ShowModalEdit(origen, id) {
+        var parametros = { Origen: origen, IdUser: id }
+        var url = '@Url.Action("_FormEditUsuario", "Account")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(parametros),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ModalEditUsuario').html(response);
+                $('#modal-editUser').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+     function ShowUsuarios() {
+        var url = '@Url.Action("_TablaUsuarios", "Account")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#viewListaUsuarios').html(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    $(function () {
+        ShowUsuarios();
+    });
+
+</script>

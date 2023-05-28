@@ -1,0 +1,231 @@
+﻿@using Dominio.EntidadesDto
+@using Infraestructura.Transversal
+@model Dominio.EntidadesDto.DocumentoDto
+@{
+    ViewBag.Title = "Documentos";
+    ViewBag.SubTitle = "Almacen de documentos";
+    ViewBag.url = @Url.Action("Index", "Home");
+    Layout = "~/Views/Shared/_LayoutDoc.cshtml";
+}
+
+@{
+    var documentos = ViewBag.documentos as Paginador<DocumentoDto>;
+}
+<script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-default shadow">
+            <div class="box-header with-border text-center">
+                <i class="glyphicon glyphicon-book"></i>
+                <h3 class="box-title">Librería de Documentos DocSave</h3>
+            </div>
+            <div class="box-body">
+                <div class="col-md-2">
+                    <button type="button" id="btnNuevoDoc" class="btn bg-olive " onclick="showModalNuevoProducto(0)">
+                        <i class="fa fa-plus"></i>
+                        Agregar Documento
+                    </button>
+                </div>
+                <div class="col-md-1" style="top:-2px;">
+                    <label class="pull-right text-right" style="font-weight:normal">Filtrar Documento:</label>
+                </div>
+                <div class="col-md-3">
+                    <select id="sltFiltro" class="form-control">
+                        <option value=0 selected>..:: Seleccione un Filtro ::..</option>
+                        <option value=1>Áreas</option>
+                        <option value=2>Documento</option>
+                    </select>
+                </div>
+
+                <div id="panelTexto" style="display:none">
+                    <div class="col-md-4">
+                        <div class="input-group-text" id="dPAvacaso">
+                            @Html.TextBoxFor(x => x.Nombre, new { @class = "form-control", @title = "Ingrese el nombre del documento", @placeholder = "Nombre del Documento" })
+                        </div>
+                    </div>
+                </div>
+                <div id="panelArea" style="display:none">
+                    <div class="col-md-6">
+                        <select id="sltArea" class="form-control">
+                            <option value=0 selected>..:: Seleccione un Área ::..</option>
+                            <option value=99>TODAS</option>
+                            @foreach (var item in ViewBag.Area)
+                            {
+                                <option value=@item.AreaId>@item.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn bg-olive redondeo shadow grow" disabled="true" id="btnConsultar" onclick="consultarDoc()">
+                        <i class="fa fa-search"></i>
+                        Consultar
+                    </button>
+                </div>
+
+            </div>
+            <div class="box-footer"></div>
+        </div>
+    </div>
+</div>
+
+<div id="viewListaDocCard" class="animated fadeIn"></div>
+<br />
+
+<div id="ShowCards" class="animated fadeIn">
+    <partial name="_Card" model="documentos" />
+</div>
+
+<div id="ModalAgregarDocumento"></div>@*Modal de nuevos documentos*@
+
+<script>
+
+    function consultarDoc() {
+        var doc = $('#Nombre').val();
+        IniciarLoad('#divGrupos');
+        var url = '@Url.Action("_BuscarDocumentoPorNombre","Documento")';
+        var data = {doc: doc};
+        if (doc != "") {
+            $.ajax({
+                type: "POST",
+                url: url,
+                contentType: "application/x-www-form-urlencoded",
+                dataType: "html",
+                data: data,
+                async: true,
+                success: function (response) {
+                    setTimeout(function () {
+                        $('#ShowCards').html(response);
+                        CerrarLoad('#divGrupos');
+                    }, 200);
+
+                },
+                error: function (response) {
+                    console.log(response);
+                    CerrarLoad('#divGrupos');
+                    $("#Nombre").val("");
+                    $("#Nombre").focus();
+                    //toastr.error("No se encuentran documentos relacionados con esta área.", 'Error', { timeOut: 5000 });
+                    FailMensaje("No se encontró ningun documento relacionado a este nombre");
+                    buscarDocumento(99);
+                }
+            })
+        } else {
+            CerrarLoad('#divGrupos');
+            $("#Nombre").focus();
+        }
+    }
+
+
+    function showModalNuevoProducto(docId) {
+        var url = '@Url.Action("_NuevoDocumento", "Documento")';
+        $.ajax({
+            data: JSON.stringify(docId),
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ModalAgregarDocumento').html(response);
+                $('#modal-documento').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+                FailGuardarJq(response);
+            }
+        });
+    }
+
+
+    $('#sltFiltro').change(function () {
+        if (this.value == 1) {
+            $("#panelArea").css("display", "block");
+            $("#panelTexto").css("display", "none");
+            $("#btnConsultar").css("display", "none");
+        } else if (this.value == 2) {
+            $("#panelArea").css("display", "none");
+            $("#panelTexto").css("display", "block");
+            $("#btnConsultar").css("display", "block");
+            $("#btnConsultar").attr("disabled", false);
+        } else {
+            $("#panelArea").css("display", "none");
+            $("#panelTexto").css("display", "none");
+            $("#btnConsultar").css("display", "block");
+            $("#btnConsultar").attr("disabled", true);
+        }
+    });
+
+
+    function Navegacion(pagina, filtro) {
+        IniciarLoad('#divGrupos')
+        console.log(pagina);
+        $.ajax({
+            url: '@Url.Action("_Card", "Documento")',
+            type: 'GET',
+            cache: false,
+            data: { pagina: pagina, filtro: filtro }
+        }).done(function (result) {
+            setTimeout(function () {
+                $('#ShowCards').html(result);
+                CerrarLoad('#divGrupos');
+            }, 25);
+            
+        });
+    }
+
+    $('#sltArea').change(function () {
+        debugger;
+        var areaId = this.value;
+        console.log(areaId);
+        buscarDocumento(areaId);
+    });
+
+    function areaSeleccionada() {
+        var area = $('#sltArea option:selected').val();
+        return area;
+    }
+
+    function buscarDocumento(areaId)
+    {
+        IniciarLoad('#divGrupos');
+        var url = '@Url.Action("_BuscarDocumentoPorArea","Documento")';
+        var data = {areaId: areaId};
+        if (areaId != 0) {
+            $.ajax({
+                type: "POST",
+                url: url,
+                contentType: "application/x-www-form-urlencoded",
+                dataType: "html",
+                data: data,
+                async: true,
+                success: function (response) {
+                    setTimeout(function () {
+                        $('#ShowCards').html(response);
+                        CerrarLoad('#divGrupos');
+                    }, 200);
+
+                },
+                error: function (response) {
+                    console.log(response);
+                    CerrarLoad('#divGrupos');
+                    $("#sltArea").val(0);                    
+                    FailMensaje("No se encuentran documentos relacionados con esta área.");
+                    buscarDocumento(99);
+                }
+            })
+        } else {
+            CerrarLoad('#divGrupos');
+            FailMensaje("Por favor seleccionar una área para realizar la búsqueda del documento.");
+        }
+    }
+
+    function deshabilitarbtnNuevoDoc() {
+        $('#btnNuevoDoc').attr("disabled", true);
+    }
+    function habilitarbtnNuevoDoc() {
+        $('#btnNuevoDoc').attr("disabled", false);
+    }
+
+
+</script>

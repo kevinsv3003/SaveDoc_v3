@@ -1,0 +1,188 @@
+﻿
+@using Entidades.Entidades
+
+@model List<Dominio.EntidadesDto.DetalleActividadDto>
+
+@{
+    var TituloFormulario = "Detalle Actividad";
+    var TituloBtn = "Aceptar Detalles";
+
+    var Actividad = Model.FirstOrDefault().Actividad;
+    var TipoActividad = Actividad.EsEspecial ? "Especial" : "Común";
+}
+
+
+@*LIBRERIA DE INPUT MASK*@
+<script src="~/bower_components/inputmask/dist/min/inputmask/jquery.inputmask.min.js"></script>
+<script src="~/bower_components/inputmask/dist/inputmask/bindings/inputmask.binding.js"></script>
+<link href="~/dist/css/CheckRadio.css" rel="stylesheet" />
+
+<div class="modal fade" id="modal-detalleActividad" style="display:none">
+    <div class="modal-dialog modal-lg animated fadeIn" style="max-width: 900px !important;" role="document">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                <h4 class="modal-title text-center">
+                    <i class="fa fa-edit"></i>
+                    <strong>@TituloFormulario</strong>
+                </h4>
+            </div>
+
+            <div id="formularioActividad" class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="box box-success shadow" style="height:280px; overflow-y:auto;">
+                            <div class="with-border">
+                            </div>
+                            <div class="box-body box-solid" style="display: block;">
+                                <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                <div class="col-md-12">
+                                    <strong><i class="fa  fa-folder-open margin-r-5"></i>Actividad</strong>
+                                    <p class="text-muted">@Actividad.NombreActividad</p>
+                                    <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                </div>
+                                <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                <div class="col-md-12">
+                                    <strong><i class="fa fa-calendar-check-o margin-r-5"></i>Fecha</strong>
+                                    <p class="text-muted">@Actividad.Fecha.Value.ToShortDateString()</p>
+                                    <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                </div>
+                                <div class="col-md-12">
+                                    <strong><i class="fa fa-map-marker margin-r-5"></i>Lugar</strong>
+                                    <p class="text-muted">@Actividad.Lugar</p>
+                                    <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                </div>
+                                <div class="col-md-12">
+                                    <strong><i class="fa fa-comments-o margin-r-5"></i>Descripción</strong>
+                                    <p class="text-muted">@Actividad.Descripcion</p>
+                                    <hr style="margin-bottom:0px !important; margin-top:0px !important;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="box box-success shadow">
+
+                            <div class="box-header with-border">
+                                <i class="fa fa-edit"></i>
+                                <h3 class="box-title">Detalle Participante</h3>
+                            </div>
+
+                            <div class="box-body" style="">
+                                <div id="detalleParticipante"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <table id="tablaAsistentes" class="table table-hover dataTable" style="border: 1px solid #dddddd;" role="grid">
+                            <thead>
+                                <tr class="bg-olive">
+                                    <th class="text-center">
+                                        Nombres
+                                    </th>
+                                    <th class="text-center">
+                                        Apellidos
+                                    </th>
+                                    <th class="text-center">
+                                        Cedula
+                                    </th>
+                                    <th class="text-center">
+                                        Oficina
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    var Nombres = item.Personal.PrimerNombre + " " + item.Personal.SegundoNombre;
+                                    var Apellidos = item.Personal.PrimerApellido + " " + item.Personal.SegundoApellido;
+                                    var asistioColor = !item.Asistio ? "#eb4f4f" : "";
+                                    var asistioLetra = !item.Asistio ? "#ffffff" : "";
+
+                                    <tr onclick="ShowDetalleParticipante(@item.DetalleActividadId)" style="cursor:pointer; background:@asistioColor; color:@asistioLetra" title="Ver Detalles">
+                                        <td class="text-justify">
+                                            @Nombres
+                                        </td>
+                                        <td class="text-justify">
+                                            @Apellidos
+                                        </td>
+                                        <td class="text-justify">
+                                            @item.Personal.Cedula
+                                        </td>
+                                        <td class="text-justify">
+                                            @item.Personal.Oficina.Nombre
+                                        </td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <button type="button" class="btn btn-block btn-verde redondeo shadow grow" data-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-save"></i> @TituloBtn
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>     
+
+    $(function () {
+        EstiloTablaParticipantes('#tablaAsistentes');
+        ShowDetalleParticipante(@ViewBag.DetalleActividadId);
+    });
+
+    function EstiloTablaParticipantes(Tabla) {
+        $(Tabla).DataTable({
+            "dom": '<"pull-left"f>t<"mgt-12"<"text-center"p><"pull-right"i>>',
+            "paging": true,
+            "lengthMenu": [[10, 20, 25, -1], [10, 20, 25, "Todos"]],
+            "searching": true,
+            "ordering": true,
+            "info": false,
+            "autoWidth": false,
+            "scrollX": false,
+            language: {
+                "decimal": "",
+                "emptyTable": "No hay información",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 to 0 of 0 registros",
+                "infoFiltered": "(Filtrado de _MAX_ total registros)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar:",
+                "zeroRecords": "Sin resultados encontrados",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        })
+    }
+
+</script>
+
+

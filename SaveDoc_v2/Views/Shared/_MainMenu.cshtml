@@ -1,0 +1,57 @@
+
+
+<ul class="sidebar-menu" data-widget="tree">
+    @*<li class="header">***************************************</li>*@
+    <!-- Optionally, you can add icons to the links -->
+    <li><a href="@Url.Action("Index", "Documento")"><i class="fa fa-archive"></i> <span>Documentos</span></a></li>
+    <li><a href="@Url.Action("Index", "Area")"><i class="fa fa-map"></i> <span>Areas</span></a></li>
+    <li class="treeview">
+        <a href="#">
+            <i class="fa fa-users"></i> <span>Usuarios</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li>
+                <a href="@Url.Action("AdministrarCuentas","Account")">
+                    <i class="fa fa-user-plus"></i>
+                    Administrar Cuentas
+                </a>
+            </li>
+
+            <li>
+                <a href="@Url.Action("AdministrarRoles","Account")">
+                    <i class="fa fa-gears"></i>
+                    Administrar Roles
+                </a>
+            </li>
+        </ul>
+
+    </li>
+    <hr style="margin-top:5px !important; margin-bottom:5px!important;" />
+    <li class="treeview">
+        <a href="#">
+            <i class="fa fa-calendar-plus-o"></i> <span>Actividades</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu">
+            <li>
+                <a href="@Url.Action("Index","Actividad")">
+                    <i class="fa fa-star-half-empty"></i>
+                    Gestionar Actividades
+                </a>
+            </li>
+
+            <li>
+                <a href="@Url.Action("Index","Personal")">
+                    <i class="fa fa-user-plus"></i>
+                    Administrar Personal
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li><a href="@Url.Action("Index", "Cuenta")"><i class="fa fa-calculator"></i> <span>Cuentas</span></a></li>
+</ul>

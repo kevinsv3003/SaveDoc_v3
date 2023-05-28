@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="3.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="3.1.23" />
+    <PackageReference Include="MimeKit" Version="3.2.0" />
+    <PackageReference Include="RazorEngine.NetCore" Version="3.1.0" />
+    <PackageReference Include="Rotativa.AspNetCore" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Dominio.Contratos\Dominio.Contratos.csproj" />
+    <ProjectReference Include="..\Dominio.EntidadesDto\Dominio.EntidadesDto.csproj" />
+    <ProjectReference Include="..\Infraestructura.Contratos\Infraestructura.Contratos.csproj" />
+  </ItemGroup>
+
+</Project>

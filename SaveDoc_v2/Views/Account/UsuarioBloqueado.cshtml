@@ -1,0 +1,35 @@
+﻿
+@{
+    ViewData["Title"] = "UsuarioBloqueado";
+    Layout = null;
+}
+
+<link href="~/dist/css/AccesoDenegado/style.css" rel="stylesheet" />
+<style>
+    a:hover {
+        background: #fff !important;
+        color: #008648 !important;
+        -webkit-box-shadow: 0px 4px 15px -5px #07832c !important;
+        box-shadow: 0px 4px 15px -5px #07832c !important;
+        transition: 0.5s ease !important;
+        -webkit-transition: 0.5s ease !important;
+        -o-transition: 0.5s ease !important;
+    }
+</style>
+
+
+
+<div id="notfound">
+    <div class="notfound">
+        <div class="notfound-404">
+            <h1>Oops!</h1>
+        </div>
+        <br /><br />
+        <h2>401 - Usuario Bloqueado!</h2>
+        <p>El usuario ha sido bloqueado temporalmente, favor coumicarse con el administrador del sistema.</p>
+        <a class="boton" href=@Url.Action("Index","Account")>Iniciar Sesión</a>
+
+
+
+    </div>
+</div>

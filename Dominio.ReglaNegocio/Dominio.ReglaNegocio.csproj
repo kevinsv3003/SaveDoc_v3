@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="8.0.0" />
+    <PackageReference Include="ClosedXML" Version="0.95.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Dominio.Contratos\Dominio.Contratos.csproj" />
+    <ProjectReference Include="..\Dominio.EntidadesDto\Dominio.EntidadesDto.csproj" />
+    <ProjectReference Include="..\Entidades.Entidades\Entidades.Entidades.csproj" />
+    <ProjectReference Include="..\Infraestructura.Contratos\Infraestructura.Contratos.csproj" />
+    <ProjectReference Include="..\Infraestructura.Transversal\Infraestructura.Transversal.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,135 @@
+﻿@{
+    ViewBag.Title = "Personal";
+    ViewBag.SubTitle = "Administrar personal";
+    ViewBag.url = @Url.Action("Index", "Personal");
+    ViewBag.Regresar = @Url.Action("Index", "Home");
+    Layout = "~/Views/Shared/_LayoutDoc.cshtml";
+}
+
+<div class="col-md-3" style="padding-left:0px">
+    <button type="button" id="btnNuevoDoc" class="btn float-left bg-olive" onclick="ShowModalFormPersonal('',1)">
+        <i class="fa fa-plus"></i>
+        Agregar Persona
+    </button>
+</div>
+<br />
+<br />
+
+<div id="ModalEditPersonal"></div>
+<div id="viewListaPersonal" class="animated fadeIn"></div>
+<div id="viewFiltroReporte"></div>
+
+<div id="modal-observaciones" class="modal fade" style="display:none">
+    <div class="modal-dialog modal-dialog-centered animated fadeIn">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="ObservacionesPersonal"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+<script>
+
+    function ShowModalFormPersonal(personalId, origen) {
+        var parametros = { Origen: origen, IdUser: personalId }
+        var url = '@Url.Action("_FormEditPersonal", "Personal")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(parametros),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ModalEditPersonal').html(response);
+                $('#modal-personal').modal("show");
+                var form = $('#formPersonal')
+                    .removeData("validator")
+                    .removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(form);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function ShowPersonal() {
+        var url = '@Url.Action("_TablaPersonal", "Personal")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#viewListaPersonal').html(response);
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function ShowObservaciones(personalId) {
+         console.log('entra en modal ' + personalId);
+         var btnClose = '<button id="btnClose" type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="fa fa-times"></i></button>';
+        var url = '@Url.Action("_FormObservaciones", "Personal")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(personalId),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#ObservacionesPersonal').html(response);
+                $("#btnMini").remove();
+                $("#toolsObser").append(btnClose);
+                $('#modal-observaciones').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    function GenerarReporte() {
+
+        var tipoReporte = $('#reporteFiltro').val();
+        var nombreReporte = $('select[name="reporteFiltro"] option:selected').text();
+        var genero = $('#generoFiltro').val();
+        var EsManagua = $('#EsManaguaFiltro').is(':checked');
+        var observaciones = $('#reporteFiltroArmado').val();
+        var restricciones = $('#reporteFiltroRestriccion').val();
+
+        console.log(JSON.stringify(observaciones));
+        var host = window.location.origin;
+        var url = host + '/Personal/GenerarReporte?TipoReporte=' + tipoReporte + '&Genero=' + genero + '&Managua=' + EsManagua + '&NombreReporte=' + nombreReporte + '&Observaciones=' + observaciones + '&Restricciones=' + restricciones;
+        window.open(url);
+    }
+
+    function ShowFiltrosReporte() {
+
+        var url = '@Url.Action("_FiltroReporte", "Personal")';
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $('#viewFiltroReporte').html(response);
+                $('#modal-filtroReporte').modal("show");
+            },
+            error: function (response) {
+                console.log(response);
+            }
+        });
+    }
+
+    $(function () {
+        ShowPersonal();
+    });
+</script>
