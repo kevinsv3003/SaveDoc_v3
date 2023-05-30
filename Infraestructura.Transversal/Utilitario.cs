@@ -37,9 +37,9 @@ namespace Infraestructura.Transversal
         {
             try
             {
-                //var message = CuerpoMensaje(mail);
-                //await SendMensaje(message);
-                EnviarMensaje(mail.Correo, mail.Asunto, mail.Mensaje);
+                var message = CuerpoMensaje(mail);
+                await SendMensaje(message);
+                //EnviarMensaje(mail.Correo, mail.Asunto, mail.Mensaje);
             }
             catch (Exception ex)
             {
@@ -273,7 +273,7 @@ namespace Infraestructura.Transversal
             }
             catch (SmtpCommandException ex)
             {
-                var mailError = new MailDto() { NombreCompleto = "Kevin Silva", Correo = "ksilva@dgi.gob.ni", Asunto = "Error De Envío de Correo." };
+                var mailError = new MailDto() { NombreCompleto = "Kevin Silva", Correo = "kevinsv3003@gmail.com", Asunto = "Error De Envío de Correo." };
                 string cuerpoCorreo = String.Empty;
                 switch (ex.ErrorCode)
                 {

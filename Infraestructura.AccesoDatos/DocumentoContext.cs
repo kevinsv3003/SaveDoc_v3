@@ -20,7 +20,7 @@ namespace Infraestructura.AccesoDatos
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-                optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=MiProyectoCoreDB;Trusted_Connection=True;MultipleActiveResultSets=true");
+                optionsBuilder.UseSqlServer(@"Server=KSV-PC;Database=SaveDocBD;Trusted_Connection=True;MultipleActiveResultSets=true");
         }
 
         public DbSet<Area> Areas { get; set; }
