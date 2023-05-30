@@ -148,7 +148,7 @@ namespace Infraestructura.Transversal
             meses.Add(select);
             for (int i = 0; i < 12; i++)
             {
-                meses.Add(new SelectListItem() { Text = MesLetra(i + 1) , Value=(i+1).ToString(), Selected=DateTime.Now.Month.Equals(i+1)});
+                meses.Add(new SelectListItem() { Text = MesLetra(i + 1), Value = (i + 1).ToString(), Selected = DateTime.Now.Month.Equals(i + 1) });
             }
             return meses;
         }
@@ -266,7 +266,8 @@ namespace Infraestructura.Transversal
             {
                 using (MailKit.Net.Smtp.SmtpClient smtp = new MailKit.Net.Smtp.SmtpClient())
                 {
-                    await smtp.ConnectAsync(_smtpSetting.Server, _smtpSetting.Port);
+                    await smtp.ConnectAsync(_smtpSetting.Server, _smtpSetting.Port, true);
+                    await smtp.AuthenticateAsync(_smtpSetting.SenderEmail, _smtpSetting.SenderPassApp);
                     await smtp.SendAsync(message);
                     await smtp.DisconnectAsync(true);
                 }
@@ -329,9 +330,9 @@ namespace Infraestructura.Transversal
             }
             catch (Exception ex)
             {
-                throw(ex);
+                throw (ex);
             }
-            
+
         }
 
         #endregion
@@ -343,7 +344,7 @@ namespace Infraestructura.Transversal
         public enum TIPO_REPORTE : byte
         {
             JUVENTUD_DISPONIBLE = 1,
-            CLS_DISPONIBLE=2,
+            CLS_DISPONIBLE = 2,
             PERSONAL_DISPONIBLE = 3,
             JUVENTUD_NO_DISPONIBLE = 4,
             CLS_NO_DISPONIBLE = 5,
