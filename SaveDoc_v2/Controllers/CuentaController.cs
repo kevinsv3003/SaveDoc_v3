@@ -36,6 +36,7 @@ namespace SaveDoc_v2.Controllers
             var cuentas = _cuentaDominio.ObtenerListaCuenta();
             var cuentaPrincipal = cuentas.Result.FirstOrDefault();
             var mesesAnio = _utilitario.ListaMesesDelAnio();
+            var filtroAnio = _utilitario.ListaFiltroAnios();
 
             List<SelectListItem> lstCuentas = new List<SelectListItem>();
             SelectListItem select = new SelectListItem() { Text = "..:: Seleccione una Opción ::..", Value = "0" };
@@ -51,6 +52,7 @@ namespace SaveDoc_v2.Controllers
 
             ViewBag.Cuentas = lstCuentas;
             ViewBag.Meses = mesesAnio;
+            ViewBag.FiltroAnios = filtroAnio;
             return View();
         }
 

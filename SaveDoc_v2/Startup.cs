@@ -41,9 +41,15 @@ namespace SaveDoc_v2
 
 
             #region//CONFIGURACIÓN DE CONEXION A LA BASE DE DATOS
-            services.AddDbContext<DocumentoContext>(options =>            {
-                options.UseSqlServer(Configuration.GetConnectionString("SaveDocCore"));
+            services.AddDbContext<DocumentoContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("SaveDocCore"),
+                    sqlServerOptionsAction: sqloptions =>
+                    {
+                        sqloptions.EnableRetryOnFailure();
+                    });
                 options.EnableSensitiveDataLogging(true);
+
             });
             #endregion
 

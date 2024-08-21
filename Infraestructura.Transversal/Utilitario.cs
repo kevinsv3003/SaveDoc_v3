@@ -152,6 +152,20 @@ namespace Infraestructura.Transversal
             }
             return meses;
         }
+        public List<SelectListItem> ListaFiltroAnios()
+        {
+            var anios = new List<SelectListItem>();
+            var anioActual = DateTime.Now.Year;
+            SelectListItem select = new SelectListItem() { Text = "..:: Seleccione una Opción ::..", Value = "0" };
+            SelectListItem selectTodos = new SelectListItem() { Text = "TODOS", Value = "1" };
+            anios.Add(select);
+            anios.Add(selectTodos);
+            for (int i = 0; i < 4; i++)
+            {
+                anios.Add(new SelectListItem() { Text = (anioActual - i).ToString(), Value = (anioActual - i).ToString(), Selected = i == 0 });
+            }
+            return anios;
+        }
 
         public int ObtenerEdadActual(DateTime Fecha)
         {

@@ -19,6 +19,7 @@ namespace Dominio.Contratos
         string MesLetra(int mes);
         string ObtenerHtml(string NameViewDocument, object Model);
         List<SelectListItem> ListaMesesDelAnio();
+        List<SelectListItem> ListaFiltroAnios();
         Task<byte[]> ObtenerByteDocumento(string reporte, object Model, HttpContext httpContext, ControllerContext controllerContext);
     }
 }

@@ -66,12 +66,7 @@
                                     <div class="col-md-4">
                                         <label>Año:</label>
                                         <div id="" class="form-group">
-                                            <select class="form-control" id="spAnioC" data-live-search="true">
-                                                <option value="0">..:: Seleccione una Opción ::..</option>
-                                                <option value="1">TODOS</option>
-                                                <option selected value="2023">2023</option>
-                                                <option value="2022">2022</option>
-                                                <option value="2021">2021</option>
+                                            <select class="form-control" id="spAnioC" data-live-search="true" asp-items="@ViewBag.FiltroAnios">                                                
                                             </select>
                                         </div>
                                     </div>
